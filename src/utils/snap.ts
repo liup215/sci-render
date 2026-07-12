@@ -27,8 +27,11 @@ export function getBounds(obj: CanvasObject) {
     }
     case 'image':
       return { minX: obj.x, maxX: obj.x + obj.width, minY: obj.y, maxY: obj.y + obj.height };
-    case 'group':
-      return { minX: obj.x, maxX: obj.x + obj.width, minY: obj.y, maxY: obj.y + obj.height };
+    case 'group': {
+      const sx = obj.scaleX ?? 1;
+      const sy = obj.scaleY ?? 1;
+      return { minX: obj.x, maxX: obj.x + obj.width * sx, minY: obj.y, maxY: obj.y + obj.height * sy };
+    }
   }
 }
 

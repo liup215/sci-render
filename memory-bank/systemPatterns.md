@@ -27,6 +27,7 @@
 - Click selects; drag moves; transform handles resize/rotate.
 - Snapping uses object bounds and grid spacing; guides rendered as dashed Konva lines.
 - Slides are independent canvases sharing the same viewport state.
-- Grouped objects are stored as a `GroupObject` with children in relative coordinates; drag/snap/duplicate operate on the group, and ungroup converts children back to absolute coordinates.
-- Transformer nodes skip group objects; groups are moved/resized via drag only.
+- Grouped objects are stored as a `GroupObject` with children in relative coordinates and optional `scaleX`/`scaleY`/`rotation`. Drag/snap/duplicate operate on the group.
+- Transformer attaches to group nodes, showing selection handles and allowing scale/rotate; `handleTransformEnd` persists the group's transform.
+- Ungroup applies the group's scale and rotation to each child, converting children back to absolute coordinates.
 - Keyboard shortcuts dispatch through `useEditorStore.getState()` to avoid stale closures.

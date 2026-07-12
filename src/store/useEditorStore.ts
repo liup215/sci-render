@@ -77,6 +77,86 @@ function cloneObject(obj: CanvasObject, dx: number, dy: number): CanvasObject {
   return { ...obj, id, x: obj.x + dx, y: obj.y + dy } as CanvasObject;
 }
 
+function transformPoint(
+  x: number,
+  y: number,
+  rotation: number,
+  scaleX: number,
+  scaleY: number
+) {
+  const sx = x * scaleX;
+  const sy = y * scaleY;
+  const rad = (rotation * Math.PI) / 180;
+  const cos = Math.cos(rad);
+  const sin = Math.sin(rad);
+  return { x: sx * cos - sy * sin, y: sx * sin + sy * cos };
+}
+
+function transformObject(
+  obj: CanvasObject,
+  gx: number,
+  gy: number,
+  rotation: number,
+  scaleX: number,
+  scaleY: number
+): CanvasObject {
+  const childRotation = (obj.rotation ?? 0) + rotation;
+
+  if (obj.type === 'line' || obj.type === 'arrow') {
+    const points: number[] = [];
+    for (let i = 0; i < obj.points.length; i += 2) {
+      const p = transformPoint(obj.points[i], obj.points[i + 1], rotation, scaleX, scaleY);
+      points.push(gx + p.x, gy + p.y);
+    }
+    return { ...obj, x: 0, y: 0, points, rotation: childRotation };
+  }
+
+  if (obj.type === 'group') {
+    const p = transformPoint(obj.x, obj.y, rotation, scaleX, scaleY);
+    const nextScaleX = (obj.scaleX ?? 1) * scaleX;
+    const nextScaleY = (obj.scaleY ?? 1) * scaleY;
+    return {
+      ...obj,
+      x: gx + p.x,
+      y: gy + p.y,
+      scaleX: nextScaleX,
+      scaleY: nextScaleY,
+      rotation: childRotation,
+      children: obj.children.map((c) =>
+        transformObject(c, gx + p.x, gy + p.y, childRotation, nextScaleX, nextScaleY)
+      ),
+    };
+  }
+
+  const p = transformPoint(obj.x, obj.y, rotation, scaleX, scaleY);
+  const absX = gx + p.x;
+  const absY = gy + p.y;
+
+  if (obj.type === 'rect' || obj.type === 'image') {
+    return { ...obj, x: absX, y: absY, width: obj.width * scaleX, height: obj.height * scaleY, rotation: childRotation };
+  }
+  if (obj.type === 'circle') {
+    return { ...obj, x: absX, y: absY, radius: obj.radius * Math.max(scaleX, scaleY), rotation: childRotation };
+  }
+  return {
+    ...obj,
+    x: absX,
+    y: absY,
+    width: (obj.width ?? 0) * scaleX,
+    fontSize: obj.fontSize * ((scaleX + scaleY) / 2),
+    rotation: childRotation,
+  };
+}
+
+function flattenGroup(group: GroupObject): CanvasObject[] {
+  const gx = group.x;
+  const gy = group.y;
+  const rotation = group.rotation ?? 0;
+  const scaleX = group.scaleX ?? 1;
+  const scaleY = group.scaleY ?? 1;
+  return group.children.map((child) => transformObject(child, gx, gy, rotation, scaleX, scaleY));
+}
+
 const defaultState: EditorState = {
   slides: [initialSlide],
   activeSlideId: initialSlide.id,
@@ -297,7 +377,9 @@ export const useEditorStore = create<EditorState & EditorActions>()(
       y: minY,
       width: maxX - minX,
       height: maxY - minY,
-      draggable: true,
+      scaleX: 1,
+      scaleY: 1,
+      rotation: 0,
       children,
     };
 
@@ -326,20 +408,7 @@ export const useEditorStore = create<EditorState & EditorActions>()(
 
     const flattened: CanvasObject[] = [];
     for (const group of groupsToUngroup) {
-      for (const child of group.children) {
-        if (child.type === 'line' || child.type === 'arrow') {
-          flattened.push({
-            ...child,
-            points: (child.points as number[]).map((p, i) => p + (i % 2 === 0 ? group.x : group.y)),
-          } as CanvasObject);
-        } else {
-          flattened.push({
-            ...child,
-            x: child.x + group.x,
-            y: child.y + group.y,
-          } as CanvasObject);
-        }
-      }
+      flattened.push(...flattenGroup(group));
     }
 
     const groupIds = new Set(groupsToUngroup.map((g) => g.id));

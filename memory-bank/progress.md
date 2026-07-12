@@ -16,7 +16,7 @@
 - "Reset session" button clears all slides and objects from state and localStorage.
 - Arrow drawing tool added with toolbar button, `A` shortcut, Konva Arrow rendering, and persistence support.
 - Image upload object added: toolbar Image button loads a local image as a base64 object, scaled to max 200px, draggable, transformable, and persisted.
-- Group / Ungroup objects: toolbar buttons, `Ctrl+G` / `Ctrl+Shift+G` shortcuts, recursive Konva Group rendering, drag/snap/duplicate/delete/persistence support.
+- Group / Ungroup objects: toolbar buttons, `Ctrl+G` / `Ctrl+Shift+G` shortcuts, recursive Konva Group rendering, drag/snap/duplicate/delete/persistence support. Groups now show a Transformer selection box and can be scaled/rotated; group transforms are baked into children on ungroup.
 
 ## In Progress
 - Choosing the next feature slice (icon library, layers/z-index, undo/redo, or UI polish).

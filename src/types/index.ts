@@ -69,6 +69,8 @@ export interface GroupObject extends BaseObject {
   type: 'group';
   width: number;
   height: number;
+  scaleX?: number;
+  scaleY?: number;
   children: CanvasObject[];
 }
 

@@ -1,7 +1,7 @@
 # Active Context
 
 ## Current Focus
-Group / Ungroup objects implemented. Ready for next feature selection.
+Fixed Group / Ungroup: groups now display a Transformer selection box and support scale/rotate transforms. Group transforms are applied to children when ungrouping.
 
 ## Decisions Made
 - Tech stack: React + TypeScript + Vite + react-konva + Zustand.
