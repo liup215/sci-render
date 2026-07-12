@@ -24,9 +24,9 @@ export function useKeyboardShortcuts() {
       const store = useEditorStore.getState();
       const { tool, selectedIds } = store;
 
-      // Tool switching
+      // Tool switching (ignore when Ctrl/Cmd is held so shortcuts like Ctrl+C/V work)
       const nextTool = TOOL_KEYS[e.key.toLowerCase()];
-      if (nextTool && nextTool !== tool) {
+      if (!e.ctrlKey && !e.metaKey && nextTool && nextTool !== tool) {
         store.setTool(nextTool);
         return;
       }
