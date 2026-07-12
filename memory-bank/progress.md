@@ -19,13 +19,13 @@
 - Group / Ungroup objects: toolbar buttons, `Ctrl+G` / `Ctrl+Shift+G` shortcuts, recursive Konva Group rendering, drag/snap/duplicate/delete/persistence support. Groups now show a Transformer selection box and can be scaled/rotated; group transforms are baked into children on ungroup.
 - Basic icon/shape preset library: toolbar Icons button opens a categorized panel; inserts `PathObject`s rendered with `Konva.Path`. Supports transform, snap, alignment, duplicate, group/ungroup, and persistence.
 - Layers / z-index panel: right-side tabbed panel lists objects top-to-bottom with selection and ordering buttons (Top/Up/Down/Bottom). Added `]`/`[` and `Ctrl+]`/`Ctrl+[` keyboard shortcuts.
+- Undo / redo: store-level history stacks with pre-mutation snapshots; toolbar buttons and `Ctrl+Z` / `Ctrl+Y` / `Ctrl+Shift+Z` shortcuts; verified add/update undo/redo in browser.
 
 ## In Progress
-- Deciding the next MVP feature (undo/redo, rulers, or UI polish).
+- Deciding the next MVP feature (rulers, UI polish, text editing improvements, or export options).
 
 ## What's Left
 - Rulers UI (optional).
-- Undo / redo (post-MVP).
 - User gallery/auth (post-MVP).
 - Backend persistence (post-MVP).
 

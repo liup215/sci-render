@@ -17,6 +17,8 @@ export interface EditorState {
   rulersVisible: boolean;
   snapEnabled: boolean;
   guides: SnapResult['guides'];
+  past: Omit<EditorState, 'past' | 'future'>[];
+  future: Omit<EditorState, 'past' | 'future'>[];
 }
 
 interface EditorActions {
@@ -28,6 +30,8 @@ interface EditorActions {
   addObject: (obj: CanvasObject) => void;
   updateObject: (id: string, patch: Partial<CanvasObject>) => void;
   deleteObjects: (ids?: string[]) => void;
+  undo: () => void;
+  redo: () => void;
   setSelectedIds: (ids: string[]) => void;
   toggleSelectedId: (id: string) => void;
   clearSelection: () => void;
@@ -180,37 +184,53 @@ const defaultState: EditorState = {
   rulersVisible: false,
   snapEnabled: true,
   guides: [],
+  past: [],
+  future: [],
 };
+
+type HistoryState = Omit<EditorState, 'past' | 'future'>;
+
+function snapshot(state: EditorState): HistoryState {
+  const { past, future, ...rest } = state;
+  return { ...rest, guides: [] };
+}
 
 export const useEditorStore = create<EditorState & EditorActions>()(
   persist(
-    (set, get) => ({
+    (set, get) => {
+      const withHistory = (mutate: () => void) => {
+        const prev = snapshot(get());
+        mutate();
+        set({ past: [...get().past, prev], future: [] });
+      };
+
+      return {
       ...defaultState,
 
   setTool: (tool) => set({ tool, selectedIds: tool !== 'select' ? [] : get().selectedIds, guides: [] }),
 
-  addSlide: () => {
+  addSlide: () => withHistory(() => {
     const newSlide = createBlankSlide(`Slide ${get().slides.length + 1}`);
     set({ slides: [...get().slides, newSlide], activeSlideId: newSlide.id, selectedIds: [] });
-  },
+  }),
 
   setActiveSlide: (id) => set({ activeSlideId: id, selectedIds: [] }),
 
-  deleteSlide: (id) => {
+  deleteSlide: (id) => withHistory(() => {
     const { slides, activeSlideId } = get();
     if (slides.length <= 1) return;
     const nextSlides = slides.filter((s) => s.id !== id);
     const nextActive = activeSlideId === id ? nextSlides[0].id : activeSlideId;
     set({ slides: nextSlides, activeSlideId: nextActive, selectedIds: [] });
-  },
+  }),
 
-  renameSlide: (id, name) => {
+  renameSlide: (id, name) => withHistory(() => {
     set({
       slides: get().slides.map((s) => (s.id === id ? { ...s, name } : s)),
     });
-  },
+  }),
 
-  addObject: (obj) => {
+  addObject: (obj) => withHistory(() => {
     const { slides, activeSlideId } = get();
     if (!activeSlideId) return;
     set({
@@ -219,9 +239,9 @@ export const useEditorStore = create<EditorState & EditorActions>()(
       ),
       selectedIds: [obj.id],
     });
-  },
+  }),
 
-  updateObject: (id, patch) => {
+  updateObject: (id, patch) => withHistory(() => {
     const { slides, activeSlideId } = get();
     if (!activeSlideId) return;
     set({
@@ -236,9 +256,9 @@ export const useEditorStore = create<EditorState & EditorActions>()(
           : s
       ),
     });
-  },
+  }),
 
-  deleteObjects: (ids) => {
+  deleteObjects: (ids) => withHistory(() => {
     const { slides, activeSlideId, selectedIds } = get();
     if (!activeSlideId) return;
     const toDelete = ids ?? selectedIds;
@@ -251,7 +271,7 @@ export const useEditorStore = create<EditorState & EditorActions>()(
       ),
       selectedIds: selectedIds.filter((id) => !toDelete.includes(id)),
     });
-  },
+  }),
 
   setSelectedIds: (ids) => set({ selectedIds: ids }),
 
@@ -270,9 +290,9 @@ export const useEditorStore = create<EditorState & EditorActions>()(
 
   setStagePos: (pos) => set({ stagePos: pos }),
 
-  setCanvasSize: (size) => set({ canvasSize: size }),
+  setCanvasSize: (size) => withHistory(() => set({ canvasSize: size })),
 
-  setCanvasColor: (color) => set({ canvasColor: color }),
+  setCanvasColor: (color) => withHistory(() => set({ canvasColor: color })),
 
   toggleGrid: () => set({ gridVisible: !get().gridVisible }),
 
@@ -280,7 +300,7 @@ export const useEditorStore = create<EditorState & EditorActions>()(
 
   toggleSnap: () => set({ snapEnabled: !get().snapEnabled }),
 
-  moveObjects: (dx, dy) => {
+  moveObjects: (dx, dy) => withHistory(() => {
     const { slides, activeSlideId, selectedIds } = get();
     if (!activeSlideId || selectedIds.length === 0) return;
     set({
@@ -299,9 +319,9 @@ export const useEditorStore = create<EditorState & EditorActions>()(
           : s
       ),
     });
-  },
+  }),
 
-  alignSelected: (align) => {
+  alignSelected: (align) => withHistory(() => {
     const { slides, activeSlideId, selectedIds } = get();
     if (!activeSlideId || selectedIds.length < 2) return;
     const slide = slides.find((s) => s.id === activeSlideId);
@@ -325,7 +345,7 @@ export const useEditorStore = create<EditorState & EditorActions>()(
           : s
       ),
     });
-  },
+  }),
 
   selectAll: () => {
     const { slides, activeSlideId } = get();
@@ -334,7 +354,7 @@ export const useEditorStore = create<EditorState & EditorActions>()(
     set({ selectedIds: slide.objects.map((o) => o.id) });
   },
 
-  duplicateSelected: () => {
+  duplicateSelected: () => withHistory(() => {
     const { slides, activeSlideId, selectedIds } = get();
     if (!activeSlideId || selectedIds.length === 0) return;
     const slide = slides.find((s) => s.id === activeSlideId);
@@ -354,9 +374,9 @@ export const useEditorStore = create<EditorState & EditorActions>()(
       ),
       selectedIds: newIds,
     });
-  },
+  }),
 
-  groupSelected: () => {
+  groupSelected: () => withHistory(() => {
     const { slides, activeSlideId, selectedIds } = get();
     if (!activeSlideId || selectedIds.length < 2) return;
     const slide = slides.find((s) => s.id === activeSlideId);
@@ -401,9 +421,9 @@ export const useEditorStore = create<EditorState & EditorActions>()(
       ),
       selectedIds: [group.id],
     });
-  },
+  }),
 
-  ungroupSelected: () => {
+  ungroupSelected: () => withHistory(() => {
     const { slides, activeSlideId, selectedIds } = get();
     if (!activeSlideId || selectedIds.length === 0) return;
     const slide = slides.find((s) => s.id === activeSlideId);
@@ -438,9 +458,9 @@ export const useEditorStore = create<EditorState & EditorActions>()(
       ),
       selectedIds: nextSelected,
     });
-  },
+  }),
 
-  bringToFront: () => {
+  bringToFront: () => withHistory(() => {
     const { slides, activeSlideId, selectedIds } = get();
     if (!activeSlideId || selectedIds.length === 0) return;
     const slide = slides.find((s) => s.id === activeSlideId);
@@ -453,9 +473,9 @@ export const useEditorStore = create<EditorState & EditorActions>()(
         s.id === activeSlideId ? { ...s, objects: [...unselected, ...selected] } : s
       ),
     });
-  },
+  }),
 
-  sendToBack: () => {
+  sendToBack: () => withHistory(() => {
     const { slides, activeSlideId, selectedIds } = get();
     if (!activeSlideId || selectedIds.length === 0) return;
     const slide = slides.find((s) => s.id === activeSlideId);
@@ -468,9 +488,9 @@ export const useEditorStore = create<EditorState & EditorActions>()(
         s.id === activeSlideId ? { ...s, objects: [...selected, ...unselected] } : s
       ),
     });
-  },
+  }),
 
-  moveForward: () => {
+  moveForward: () => withHistory(() => {
     const { slides, activeSlideId, selectedIds } = get();
     if (!activeSlideId || selectedIds.length === 0) return;
     set({
@@ -486,9 +506,9 @@ export const useEditorStore = create<EditorState & EditorActions>()(
         return { ...s, objects: next };
       }),
     });
-  },
+  }),
 
-  moveBackward: () => {
+  moveBackward: () => withHistory(() => {
     const { slides, activeSlideId, selectedIds } = get();
     if (!activeSlideId || selectedIds.length === 0) return;
     set({
@@ -503,6 +523,28 @@ export const useEditorStore = create<EditorState & EditorActions>()(
         }
         return { ...s, objects: next };
       }),
+    });
+  }),
+
+  undo: () => {
+    const state = get();
+    if (state.past.length === 0) return;
+    const previous = state.past[state.past.length - 1];
+    set({
+      ...previous,
+      past: state.past.slice(0, -1),
+      future: [snapshot(state), ...state.future],
+    });
+  },
+
+  redo: () => {
+    const state = get();
+    if (state.future.length === 0) return;
+    const next = state.future[0];
+    set({
+      ...next,
+      past: [...state.past, snapshot(state)],
+      future: state.future.slice(1),
     });
   },
 
@@ -523,10 +565,19 @@ export const useEditorStore = create<EditorState & EditorActions>()(
       rulersVisible: false,
       snapEnabled: true,
       guides: [],
+      past: [],
+      future: [],
     });
   },
-}), {
-  name: 'sci-render-storage',
-  storage: createJSONStorage(() => localStorage),
-})
+};
+    },
+    {
+      name: 'sci-render-storage',
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => {
+        const { past, future, ...rest } = state;
+        return rest;
+      },
+    }
+  )
 );

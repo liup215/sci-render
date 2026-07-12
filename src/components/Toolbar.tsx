@@ -34,6 +34,10 @@ export function Toolbar({ onOpenIconLibrary }: ToolbarProps) {
     groupSelected,
     ungroupSelected,
     canvasSize,
+    undo,
+    redo,
+    past,
+    future,
   } = useEditorStore();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -133,6 +137,15 @@ export function Toolbar({ onOpenIconLibrary }: ToolbarProps) {
         <span>{Math.round(zoom * 100)}%</span>
         <button onClick={() => setZoom(zoom * 1.1)}>+</button>
         <button onClick={() => setZoom(1)}>Reset</button>
+      </div>
+
+      <div className="toolbar-group">
+        <button onClick={undo} disabled={past.length === 0} title="Undo (Ctrl+Z)">
+          Undo
+        </button>
+        <button onClick={redo} disabled={future.length === 0} title="Redo (Ctrl+Y / Ctrl+Shift+Z)">
+          Redo
+        </button>
       </div>
 
       <div className="toolbar-group">

@@ -66,6 +66,22 @@ export function useKeyboardShortcuts() {
         return;
       }
 
+      // Undo / Redo
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+        e.preventDefault();
+        if (e.shiftKey) {
+          store.redo();
+        } else {
+          store.undo();
+        }
+        return;
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
+        e.preventDefault();
+        store.redo();
+        return;
+      }
+
       // Layer ordering shortcuts
       if ((e.ctrlKey || e.metaKey) && e.key === ']') {
         e.preventDefault();
