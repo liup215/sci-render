@@ -126,54 +126,103 @@ input[type='color'] {
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
   padding: 8px 6px;
   border-right: 1px solid #e5e7eb;
   background: #f9fafb;
   overflow-y: auto;
 }
 
-.toolbox-group {
+.toolbox-category {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 3px;
-  padding-bottom: 6px;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.toolbox-group:last-child {
-  padding-bottom: 0;
-  border-bottom: none;
-}
-
-.toolbox-group-label {
-  font-size: 9px;
-  font-weight: 600;
-  text-transform: uppercase;
-  color: #6b7280;
-  text-align: center;
-  padding: 2px 0;
-  letter-spacing: 0.3px;
-}
-
-.toolbox button {
-  padding: 7px 4px;
-  border: 1px solid #d1d5db;
-  background: #fff;
-  border-radius: 5px;
-  text-align: center;
-  font-size: 11px;
+  padding: 8px 4px;
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: 6px;
+  color: #4b5563;
   cursor: pointer;
 }
 
-.toolbox button:hover {
+.toolbox-category:hover {
   background: #f3f4f6;
+  border-color: #d1d5db;
 }
 
-.toolbox button.active {
-  background: #3b82f6;
-  color: #fff;
+.toolbox-category.active {
+  background: #eff6ff;
+  color: #2563eb;
   border-color: #3b82f6;
+}
+
+.toolbox-category-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.toolbox-category-label {
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+}
+
+.tool-palette {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.tool-palette-header {
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+  font-weight: 600;
+  font-size: 14px;
+  color: #111827;
+}
+
+.tool-palette-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  padding: 12px;
+  overflow-y: auto;
+}
+
+.tool-palette-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 8px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.tool-palette-item:hover {
+  background: #f9fafb;
+  border-color: #3b82f6;
+}
+
+.tool-palette-item.active {
+  background: #eff6ff;
+  border-color: #3b82f6;
+  color: #1d4ed8;
+}
+
+.tool-palette-item-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.tool-palette-item-label {
+  font-size: 12px;
+  color: #374151;
 }
 
 .left-panel-body {

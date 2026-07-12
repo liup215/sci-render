@@ -1,12 +1,15 @@
-import { Toolbox } from './Toolbox';
-import { IconLibraryContent } from './IconLibraryContent';
+import { useState } from 'react';
+import { Toolbox, type ToolCategory } from './Toolbox';
+import { ToolPalette } from './ToolPalette';
 
 export function LeftPanel() {
+  const [activeCategory, setActiveCategory] = useState<ToolCategory>('select');
+
   return (
     <div className="left-panel">
-      <Toolbox />
+      <Toolbox activeCategory={activeCategory} onSelectCategory={setActiveCategory} />
       <div className="left-panel-body">
-        <IconLibraryContent />
+        <ToolPalette category={activeCategory} />
       </div>
     </div>
   );

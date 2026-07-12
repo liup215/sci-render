@@ -1,46 +1,39 @@
-import { useEditorStore } from '../store/useEditorStore';
-import type { Tool } from '../types';
+export type ToolCategory = 'select' | 'shapes' | 'lines' | 'text' | 'draw' | 'library';
 
-const TOOL_LABELS: Record<Tool, string> = {
-  select: 'Select (V)',
-  rect: 'Rectangle (R)',
-  circle: 'Circle (C)',
-  line: 'Line (L)',
-  arrow: 'Arrow (A)',
-  text: 'Text (T)',
-  pen: 'Pen (P)',
-};
+export interface CategoryDef {
+  id: ToolCategory;
+  label: string;
+  icon: string;
+  shortcut?: string;
+}
 
-const GROUPS: { label: string; tools: Tool[] }[] = [
-  { label: 'Select', tools: ['select'] },
-  { label: 'Shapes', tools: ['rect', 'circle'] },
-  { label: 'Lines', tools: ['line', 'arrow'] },
-  { label: 'Text', tools: ['text'] },
-  { label: 'Draw', tools: ['pen'] },
+export const CATEGORIES: CategoryDef[] = [
+  { id: 'select', label: 'Select', icon: '↖', shortcut: 'V' },
+  { id: 'shapes', label: 'Shapes', icon: '▧', shortcut: 'R' },
+  { id: 'lines', label: 'Lines', icon: '/', shortcut: 'L' },
+  { id: 'text', label: 'Text', icon: 'T', shortcut: 'T' },
+  { id: 'draw', label: 'Draw', icon: '✎', shortcut: 'P' },
+  { id: 'library', label: 'Library', icon: '☷' },
 ];
 
-export function Toolbox() {
-  const { tool, setTool } = useEditorStore();
+export interface ToolboxProps {
+  activeCategory: ToolCategory;
+  onSelectCategory: (category: ToolCategory) => void;
+}
 
+export function Toolbox({ activeCategory, onSelectCategory }: ToolboxProps) {
   return (
     <div className="toolbox">
-      {GROUPS.map((group) => (
-        <div key={group.label} className="toolbox-group">
-          <span className="toolbox-group-label">{group.label}</span>
-          {group.tools.map((id) => {
-            const label = TOOL_LABELS[id];
-            return (
-              <button
-                key={id}
-                className={tool === id ? 'active' : ''}
-                onClick={() => setTool(id)}
-                title={label}
-              >
-                {label.split(' ')[0]}
-              </button>
-            );
-          })}
-        </div>
+      {CATEGORIES.map((cat) => (
+        <button
+          key={cat.id}
+          className={`toolbox-category ${activeCategory === cat.id ? 'active' : ''}`}
+          onClick={() => onSelectCategory(cat.id)}
+          title={`${cat.label}${cat.shortcut ? ` (${cat.shortcut})` : ''}`}
+        >
+          <span className="toolbox-category-icon">{cat.icon}</span>
+          <span className="toolbox-category-label">{cat.label}</span>
+        </button>
       ))}
     </div>
   );

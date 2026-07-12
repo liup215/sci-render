@@ -1,16 +1,17 @@
 # Active Context
 
 ## Current Focus
-The main application UI has been reorganized into a BioRender-style layout: a single dark top header that combines the brand and a grouped toolbar, a left sidebar with tabbed "Slides" and "Icons" panels, a central canvas area, and the existing right-side Properties/Layers panel.
+The left toolbox has been redesigned to match BioRender's category-driven navigation. Instead of listing every drawing tool directly, the left sidebar now shows a narrow vertical list of high-level categories; selecting a category reveals its tools or the icon library in the wider panel to the right.
 
-Key layout changes (BioRender-style v2):
-- `App.tsx` renders a minimal `<Toolbar />` inside the header and `<LeftPanel />` in the body.
-- Top header now only holds global actions: brand, undo/redo/delete, view toggles (grid/rulers/snap), insert/export (image/PNG/SVG), and zoom.
-- `LeftPanel` is a two-column sidebar: a narrow vertical `<Toolbox />` on the left and a large searchable `IconLibraryContent` on the right.
-- `<Toolbox />` now groups tools logically with small labels: Select, Shapes (Rectangle/Circle), Lines (Line/Arrow), Text, Draw (Pen).
-- `IconLibraryContent` now includes a search input that filters presets by name within the active category, plus an empty state.
-- Slides have moved out of the left sidebar into a new "Slides" tab in the right-side `PropertiesPanel`, so the right panel now has Properties / Layers / Slides tabs.
-- Align and ordering buttons were removed from the top header to reduce clutter; ordering is still available in the Layers tab, and alignment can be reintroduced later via a context menu or dedicated properties section.
+Key layout changes (BioRender-style v3):
+- `App.tsx` still renders a minimal `<Toolbar />` in the header and `<LeftPanel />` in the body.
+- Top header holds global actions only: brand, undo/redo/delete, view toggles (grid/rulers/snap), insert/export (image/PNG/SVG), and zoom.
+- `LeftPanel` remains a two-column sidebar, but the narrow left column is now a category selector rather than a flat tool list.
+- `<Toolbox />` now renders top-level categories: Select, Shapes, Lines, Text, Draw, Library. Clicking a category highlights it and passes the selection upward.
+- New `<ToolPalette />` renders the sub-tools for the active category (e.g., Shapes → Rectangle / Circle; Lines → Line / Arrow) and swaps in `<IconLibraryContent />` for the Library category.
+- `IconLibraryContent` still provides search and categorized preset icons, now accessed through the Library category.
+- Slides remain in a "Slides" tab inside the right-side `PropertiesPanel`.
+- Align and ordering buttons are still removed from the top header; ordering lives in the Layers tab.
 
 Verification confirmed in a production build (`npm run build && npm run preview`) to avoid the Vite dev HMR store-duplication issue.
 
