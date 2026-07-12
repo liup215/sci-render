@@ -120,6 +120,35 @@ input[type='color'] {
   flex-shrink: 0;
 }
 
+.toolbox {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.toolbox button {
+  padding: 8px 10px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  border-radius: 5px;
+  text-align: left;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.toolbox button:hover {
+  background: #f3f4f6;
+}
+
+.toolbox button.active {
+  background: #3b82f6;
+  color: #fff;
+  border-color: #3b82f6;
+}
+
 .left-panel-tabs {
   display: flex;
   border-bottom: 1px solid #e5e7eb;

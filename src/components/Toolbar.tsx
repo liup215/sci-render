@@ -1,23 +1,11 @@
 import { useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useEditorStore } from '../store/useEditorStore';
-import type { Tool, CanvasObject } from '../types';
+import type { CanvasObject } from '../types';
 import type { AlignMode } from '../utils/snap';
-
-const TOOLS: { id: Tool; label: string }[] = [
-  { id: 'select', label: 'Select (V)' },
-  { id: 'rect', label: 'Rectangle (R)' },
-  { id: 'circle', label: 'Circle (C)' },
-  { id: 'line', label: 'Line (L)' },
-  { id: 'arrow', label: 'Arrow (A)' },
-  { id: 'text', label: 'Text (T)' },
-  { id: 'pen', label: 'Pen (P)' },
-];
 
 export function Toolbar() {
   const {
-    tool,
-    setTool,
     zoom,
     setZoom,
     gridVisible,
@@ -88,19 +76,6 @@ export function Toolbar() {
 
   return (
     <div className="toolbar">
-      <div className="toolbar-group toolbar-tools">
-        {TOOLS.map((t) => (
-          <button
-            key={t.id}
-            className={tool === t.id ? 'active' : ''}
-            onClick={() => setTool(t.id)}
-            title={t.label}
-          >
-            {t.label.split(' ')[0]}
-          </button>
-        ))}
-      </div>
-
       <div className="toolbar-group">
         <button onClick={undo} disabled={past.length === 0} title="Undo (Ctrl+Z)">
           Undo

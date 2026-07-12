@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Toolbox } from './Toolbox';
 import { SlidePanel } from './SlidePanel';
 import { IconLibraryContent } from './IconLibraryContent';
 
@@ -9,6 +10,7 @@ export function LeftPanel() {
 
   return (
     <div className="left-panel">
+      <Toolbox />
       <div className="left-panel-tabs">
         <button
           className={tab === 'slides' ? 'active' : ''}
