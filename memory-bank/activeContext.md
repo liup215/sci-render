@@ -1,9 +1,7 @@
 # Active Context
 
 ## Current Focus
-Copy/paste for canvas objects is complete and verified. Selected objects are cloned into an in-memory clipboard with `Ctrl+C` and pasted with a 20px offset using `Ctrl+V`; pasted objects become the new selection. The implementation reuses the existing `cloneObject` helper, so groups, arrows, lines, paths, images, and text are all supported.
-
-A bug where `Ctrl+C` cancelled the current selection was fixed: the tool-switching branch in `useKeyboardShortcuts` ran before the copy/paste branch and treated `c` as the Circle tool shortcut, calling `setTool('circle')` which clears `selectedIds`. Tool switching now ignores keypresses when `Ctrl`/`Cmd` is held.
+SVG vector export is implemented and verified. The toolbar now has an "Export SVG" button that generates a true SVG document from the active slide's objects, including rectangles, circles, text, lines, arrows, images, paths, and groups. Rendering mirrors the Konva canvas: transforms follow `translate → rotate → scale`, arrowheads use SVG `<marker>` definitions, and multi-line text is emitted as `<tspan>` elements. The generated SVG downloads as `<slide-name>.svg`.
 
 ## Decisions Made
 - Tech stack: React + TypeScript + Vite + react-konva + Zustand.
@@ -18,9 +16,10 @@ A bug where `Ctrl+C` cancelled the current selection was fixed: the tool-switchi
 - Grid lines are rendered as independent `Line` nodes to avoid unintended connecting strokes.
 - Inline text editing uses an HTML `<textarea>` absolutely positioned with the same transform (position, scale, rotation) as the Konva Text node; edits commit via `updateObject`.
 - Text tool creates the object on mouseup and immediately enters edit mode; select-tool double-click also enters edit mode.
+- SVG export is generated manually from the Zustand store rather than rasterized from Konva; this keeps output as true vectors and supports all current object types without adding server-side rendering.
 
 ## Next Steps
-1. Choose the next MVP feature (export options, UI polish, or advanced drawing tools).
+1. Choose the next MVP feature (advanced drawing tools, additional export formats, or UI polish).
 2. Continue incremental implementation with build + browser verification.
 3. Commit and push after each feature slice.
 

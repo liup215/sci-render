@@ -23,9 +23,10 @@
 - Rulers UI: toolbar "Rulers" toggle shows/hides horizontal and vertical canvas rulers around the stage; ticks and labels scale with zoom and pan.
 - Text editing enhancement: inline `<textarea>` editor on double-click; `TextObject` now supports `fontFamily`, `fontStyle`, and `align`; Properties panel adds font family/size, bold/italic, and alignment controls.
 - Copy / paste: `Ctrl+C` copies selected objects to an in-memory clipboard, `Ctrl+V` pastes cloned objects offset by (20, 20) and selects the pasted set; supports groups and multiple selections.
+- SVG vector export: toolbar "Export SVG" button generates true SVG from active slide objects (rect, circle, text, line, arrow, image, path, group) with proper transforms, markers, and multi-line text; downloads as `<slide-name>.svg`.
 
 ## In Progress
-- Deciding the next MVP feature (export options, UI polish, or advanced drawing tools).
+- Deciding the next MVP feature (advanced drawing tools, additional export formats, or UI polish).
 
 ## What's Left
 - User gallery/auth (post-MVP).

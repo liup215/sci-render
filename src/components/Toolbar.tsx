@@ -40,6 +40,7 @@ export function Toolbar({ onOpenIconLibrary }: ToolbarProps) {
     redo,
     past,
     future,
+    exportSvg,
   } = useEditorStore();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -157,6 +158,7 @@ export function Toolbar({ onOpenIconLibrary }: ToolbarProps) {
         <button onClick={() => fileInputRef.current?.click()}>Image</button>
         <button onClick={onOpenIconLibrary}>Icons</button>
         <button onClick={handleExport}>Export PNG</button>
+        <button onClick={exportSvg}>Export SVG</button>
         <button onClick={() => deleteObjects()} disabled={selectedIds.length === 0}>
           Delete
         </button>

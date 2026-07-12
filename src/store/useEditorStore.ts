@@ -3,6 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { v4 as uuidv4 } from 'uuid';
 import type { CanvasObject, GroupObject, Slide, Tool, CanvasSize } from '../types';
 import { alignObjects, getBounds, type AlignMode, type SnapResult } from '../utils/snap';
+import { slideToSvg, downloadSvg } from '../utils/exportSvg';
 
 export interface EditorState {
   slides: Slide[];
@@ -50,6 +51,7 @@ interface EditorActions {
   duplicateSelected: () => void;
   copySelected: () => void;
   paste: () => void;
+  exportSvg: () => void;
   groupSelected: () => void;
   ungroupSelected: () => void;
   bringToFront: () => void;
@@ -415,6 +417,15 @@ export const useEditorStore = create<EditorState & EditorActions>()(
       selectedIds: newIds,
     });
   }),
+
+  exportSvg: () => {
+    const { slides, activeSlideId, canvasSize, canvasColor } = get();
+    if (!activeSlideId) return;
+    const slide = slides.find((s) => s.id === activeSlideId);
+    if (!slide) return;
+    const svg = slideToSvg(slide, canvasSize, canvasColor);
+    downloadSvg(svg, `${slide.name || 'slide'}.svg`);
+  },
 
   groupSelected: () => withHistory(() => {
     const { slides, activeSlideId, selectedIds } = get();
