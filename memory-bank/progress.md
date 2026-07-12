@@ -17,13 +17,14 @@
 - Arrow drawing tool added with toolbar button, `A` shortcut, Konva Arrow rendering, and persistence support.
 - Image upload object added: toolbar Image button loads a local image as a base64 object, scaled to max 200px, draggable, transformable, and persisted.
 - Group / Ungroup objects: toolbar buttons, `Ctrl+G` / `Ctrl+Shift+G` shortcuts, recursive Konva Group rendering, drag/snap/duplicate/delete/persistence support. Groups now show a Transformer selection box and can be scaled/rotated; group transforms are baked into children on ungroup.
+- Basic icon/shape preset library: toolbar Icons button opens a categorized panel; inserts `PathObject`s rendered with `Konva.Path`. Supports transform, snap, alignment, duplicate, group/ungroup, and persistence.
+- Layers / z-index panel: right-side tabbed panel lists objects top-to-bottom with selection and ordering buttons (Top/Up/Down/Bottom). Added `]`/`[` and `Ctrl+]`/`Ctrl+[` keyboard shortcuts.
 
 ## In Progress
-- Deciding the next MVP feature (layers/z-index, undo/redo, or UI polish).
+- Deciding the next MVP feature (undo/redo, rulers, or UI polish).
 
 ## What's Left
 - Rulers UI (optional).
-- Layers / z-index panel (post-MVP).
 - Undo / redo (post-MVP).
 - User gallery/auth (post-MVP).
 - Backend persistence (post-MVP).

@@ -66,6 +66,26 @@ export function useKeyboardShortcuts() {
         return;
       }
 
+      // Layer ordering shortcuts
+      if ((e.ctrlKey || e.metaKey) && e.key === ']') {
+        e.preventDefault();
+        store.bringToFront();
+        return;
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key === '[') {
+        e.preventDefault();
+        store.sendToBack();
+        return;
+      }
+      if (e.key === ']') {
+        store.moveForward();
+        return;
+      }
+      if (e.key === '[') {
+        store.moveBackward();
+        return;
+      }
+
       // Nudge with arrow keys
       if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
         if (selectedIds.length === 0) return;

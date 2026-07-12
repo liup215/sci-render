@@ -44,6 +44,10 @@ interface EditorActions {
   duplicateSelected: () => void;
   groupSelected: () => void;
   ungroupSelected: () => void;
+  bringToFront: () => void;
+  sendToBack: () => void;
+  moveForward: () => void;
+  moveBackward: () => void;
   setGuides: (guides: SnapResult['guides']) => void;
   resetSession: () => void;
 }
@@ -433,6 +437,72 @@ export const useEditorStore = create<EditorState & EditorActions>()(
           : s
       ),
       selectedIds: nextSelected,
+    });
+  },
+
+  bringToFront: () => {
+    const { slides, activeSlideId, selectedIds } = get();
+    if (!activeSlideId || selectedIds.length === 0) return;
+    const slide = slides.find((s) => s.id === activeSlideId);
+    if (!slide) return;
+    const selectedSet = new Set(selectedIds);
+    const selected = slide.objects.filter((o) => selectedSet.has(o.id));
+    const unselected = slide.objects.filter((o) => !selectedSet.has(o.id));
+    set({
+      slides: slides.map((s) =>
+        s.id === activeSlideId ? { ...s, objects: [...unselected, ...selected] } : s
+      ),
+    });
+  },
+
+  sendToBack: () => {
+    const { slides, activeSlideId, selectedIds } = get();
+    if (!activeSlideId || selectedIds.length === 0) return;
+    const slide = slides.find((s) => s.id === activeSlideId);
+    if (!slide) return;
+    const selectedSet = new Set(selectedIds);
+    const selected = slide.objects.filter((o) => selectedSet.has(o.id));
+    const unselected = slide.objects.filter((o) => !selectedSet.has(o.id));
+    set({
+      slides: slides.map((s) =>
+        s.id === activeSlideId ? { ...s, objects: [...selected, ...unselected] } : s
+      ),
+    });
+  },
+
+  moveForward: () => {
+    const { slides, activeSlideId, selectedIds } = get();
+    if (!activeSlideId || selectedIds.length === 0) return;
+    set({
+      slides: slides.map((s) => {
+        if (s.id !== activeSlideId) return s;
+        const selectedSet = new Set(selectedIds);
+        const next = [...s.objects];
+        for (let i = next.length - 2; i >= 0; i--) {
+          if (selectedSet.has(next[i].id) && !selectedSet.has(next[i + 1].id)) {
+            [next[i], next[i + 1]] = [next[i + 1], next[i]];
+          }
+        }
+        return { ...s, objects: next };
+      }),
+    });
+  },
+
+  moveBackward: () => {
+    const { slides, activeSlideId, selectedIds } = get();
+    if (!activeSlideId || selectedIds.length === 0) return;
+    set({
+      slides: slides.map((s) => {
+        if (s.id !== activeSlideId) return s;
+        const selectedSet = new Set(selectedIds);
+        const next = [...s.objects];
+        for (let i = 1; i < next.length; i++) {
+          if (selectedSet.has(next[i].id) && !selectedSet.has(next[i - 1].id)) {
+            [next[i - 1], next[i]] = [next[i], next[i - 1]];
+          }
+        }
+        return { ...s, objects: next };
+      }),
     });
   },
 
