@@ -1,7 +1,7 @@
 # Active Context
 
 ## Current Focus
-Implemented undo / redo history. Added `past`/`future` stacks to the Zustand store, a `snapshot` helper, a `withHistory` wrapper around mutating actions, and `undo`/`redo` actions. Wired toolbar Undo/Redo buttons and keyboard shortcuts `Ctrl+Z` / `Ctrl+Y` / `Ctrl+Shift+Z`. History is not persisted across reloads.
+Implemented rulers UI. Added a `Rulers` component that renders horizontal and vertical canvas-backed rulers around the stage, with major/minor ticks and labels that update with zoom and pan. Added a toolbar "Rulers" toggle button and integrated rulers into the canvas workspace grid layout.
 
 ## Decisions Made
 - Tech stack: React + TypeScript + Vite + react-konva + Zustand.
@@ -12,9 +12,10 @@ Implemented undo / redo history. Added `past`/`future` stacks to the Zustand sto
 - Layer list is shown top-to-bottom (highest z-index first) with row selection and ordering buttons.
 - Undo/redo snapshots exclude the history stacks and transient guides.
 - `persist` partialize excludes `past`/`future` so history is reset on reload.
+- Rulers are drawn on HTML `<canvas>` overlays using a 20px grid layout; they respond to `zoom` and `stagePos` from the store.
 
 ## Next Steps
-1. Choose the next MVP feature (rulers, UI polish, text editing improvements, or export options).
+1. Choose the next MVP feature (text editing improvements, export options, or UI polish).
 2. Continue incremental implementation with build + browser verification.
 3. Commit and push after each feature slice.
 

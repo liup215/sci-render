@@ -20,12 +20,12 @@
 - Basic icon/shape preset library: toolbar Icons button opens a categorized panel; inserts `PathObject`s rendered with `Konva.Path`. Supports transform, snap, alignment, duplicate, group/ungroup, and persistence.
 - Layers / z-index panel: right-side tabbed panel lists objects top-to-bottom with selection and ordering buttons (Top/Up/Down/Bottom). Added `]`/`[` and `Ctrl+]`/`Ctrl+[` keyboard shortcuts.
 - Undo / redo: store-level history stacks with pre-mutation snapshots; toolbar buttons and `Ctrl+Z` / `Ctrl+Y` / `Ctrl+Shift+Z` shortcuts; verified add/update undo/redo in browser.
+- Rulers UI: toolbar "Rulers" toggle shows/hides horizontal and vertical canvas rulers around the stage; ticks and labels scale with zoom and pan.
 
 ## In Progress
-- Deciding the next MVP feature (rulers, UI polish, text editing improvements, or export options).
+- Deciding the next MVP feature (text editing improvements, export options, or UI polish).
 
 ## What's Left
-- Rulers UI (optional).
 - User gallery/auth (post-MVP).
 - Backend persistence (post-MVP).
 

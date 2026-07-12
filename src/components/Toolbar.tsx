@@ -25,6 +25,8 @@ export function Toolbar({ onOpenIconLibrary }: ToolbarProps) {
     setZoom,
     gridVisible,
     toggleGrid,
+    rulersVisible,
+    toggleRulers,
     snapEnabled,
     toggleSnap,
     selectedIds,
@@ -102,6 +104,9 @@ export function Toolbar({ onOpenIconLibrary }: ToolbarProps) {
       <div className="toolbar-group">
         <button onClick={toggleGrid} className={gridVisible ? 'active' : ''}>
           Grid
+        </button>
+        <button onClick={toggleRulers} className={rulersVisible ? 'active' : ''}>
+          Rulers
         </button>
         <button onClick={toggleSnap} className={snapEnabled ? 'active' : ''}>
           Snap
