@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { Rect, Circle, Text, Line } from 'react-konva';
+import { Rect, Circle, Text, Line, Arrow } from 'react-konva';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import type { CanvasObject } from '../types';
 import { useEditorStore } from '../store/useEditorStore';
@@ -82,7 +82,7 @@ export function Shape({ object, isSelected }: ShapeProps) {
     const node = e.target;
     setGuides([]);
 
-    if (object.type === 'line') {
+    if (object.type === 'line' || object.type === 'arrow') {
       // Convert node offset back into absolute points
       const dx = node.x();
       const dy = node.y();
@@ -170,6 +170,30 @@ export function Shape({ object, isSelected }: ShapeProps) {
           points={object.points}
           stroke={object.stroke}
           strokeWidth={object.strokeWidth}
+          rotation={object.rotation ?? 0}
+          draggable={draggable}
+          onClick={handleClick}
+          onDblClick={handleDblClick}
+          onDragStart={handleDragStart}
+          onDragMove={handleDragMove}
+          onDragEnd={handleDragEnd}
+          hitStrokeWidth={Math.max(object.strokeWidth, 8)}
+        />
+      );
+    case 'arrow':
+      return (
+        <Arrow
+          id={object.id}
+          x={object.x}
+          y={object.y}
+          points={object.points}
+          stroke={object.stroke}
+          strokeWidth={object.strokeWidth}
+          fill={object.fill}
+          pointerLength={object.pointerLength}
+          pointerWidth={object.pointerWidth}
+          pointerAtEnding={object.pointerAtEnding}
+          pointerAtBeginning={object.pointerAtBeginning}
           rotation={object.rotation ?? 0}
           draggable={draggable}
           onClick={handleClick}

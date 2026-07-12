@@ -1,7 +1,7 @@
 # Active Context
 
 ## Current Focus
-Local persistence implemented with Zustand persist to localStorage. Next feature: expand the shape library with arrows, paths, icons, or image objects.
+Arrow tool added to the shape library. Next feature: uploadable image object or basic icon library.
 
 ## Decisions Made
 - Tech stack: React + TypeScript + Vite + react-konva + Zustand.
@@ -11,7 +11,7 @@ Local persistence implemented with Zustand persist to localStorage. Next feature
 - Keyboard shortcuts are global and ignored while typing in inputs.
 
 ## Next Steps
-1. Expand shape library (arrows, paths, icons) and add an image upload object.
+1. Add uploadable image object to the canvas.
 2. Consider Tailwind or a component library for UI polish.
 3. Decide on backend persistence strategy post-MVP.
 

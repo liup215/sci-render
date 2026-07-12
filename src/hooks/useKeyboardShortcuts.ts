@@ -7,6 +7,7 @@ const TOOL_KEYS: Record<string, Tool> = {
   r: 'rect',
   c: 'circle',
   l: 'line',
+  a: 'arrow',
   t: 'text',
 };
 

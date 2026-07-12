@@ -5,7 +5,7 @@ import Konva from 'konva';
 import { v4 as uuidv4 } from 'uuid';
 import { useEditorStore } from '../store/useEditorStore';
 import { Shape } from './Shape';
-import type { CanvasObject, RectObject, CircleObject, TextObject, LineObject } from '../types';
+import type { CanvasObject, RectObject, CircleObject, TextObject, LineObject, ArrowObject } from '../types';
 
 const GRID_SIZE = 20;
 
@@ -257,7 +257,7 @@ export function CanvasStage() {
           const cy = o.type === 'circle' ? o.y : o.y + (o.type === 'rect' ? o.height / 2 : 0);
           // Simple center-point selection for text/line
           if (o.type === 'text') return o.x >= x1 && o.x <= x2 && o.y >= y1 && o.y <= y2;
-          if (o.type === 'line') {
+          if (o.type === 'line' || o.type === 'arrow') {
             const xs = o.points.filter((_, i) => i % 2 === 0);
             const ys = o.points.filter((_, i) => i % 2 === 1);
             const lx = xs.reduce((a, b) => a + b, 0) / xs.length;
@@ -324,7 +324,7 @@ export function CanvasStage() {
           fontSize: Math.max(8, obj.fontSize * Math.max(scaleX, scaleY)),
           rotation,
         });
-      } else if (obj.type === 'line') {
+      } else if (obj.type === 'line' || obj.type === 'arrow') {
         // Apply scale to points relative to origin
         updateObject(id, {
           points: obj.points.map((p, i) => p * (i % 2 === 0 ? scaleX : scaleY)),
@@ -462,7 +462,7 @@ export function CanvasStage() {
 }
 
 function buildShapeFromDraw(
-  tool: 'rect' | 'circle' | 'line',
+  tool: 'rect' | 'circle' | 'line' | 'arrow',
   start: { x: number; y: number },
   current: { x: number; y: number },
   id: string
@@ -511,11 +511,27 @@ function buildShapeFromDraw(
         strokeWidth: 3,
         draggable: true,
       } as LineObject;
+    case 'arrow':
+      return {
+        id,
+        type: 'arrow',
+        x: 0,
+        y: 0,
+        points: [start.x, start.y, current.x, current.y],
+        stroke: '#1f2937',
+        strokeWidth: 3,
+        pointerLength: 12,
+        pointerWidth: 12,
+        pointerAtEnding: true,
+        pointerAtBeginning: false,
+        fill: '#1f2937',
+        draggable: true,
+      } as ArrowObject;
   }
 }
 
 function isShapeVisible(obj: CanvasObject): boolean {
-  if (obj.type === 'line') {
+  if (obj.type === 'line' || obj.type === 'arrow') {
     const p = obj.points;
     return Math.abs(p[0] - p[2]) > 2 || Math.abs(p[1] - p[3]) > 2;
   }
@@ -529,7 +545,7 @@ function PreviewShape({
   start,
   current,
 }: {
-  tool: 'rect' | 'circle' | 'line';
+  tool: 'rect' | 'circle' | 'line' | 'arrow';
   start: { x: number; y: number };
   current: { x: number; y: number };
 }) {

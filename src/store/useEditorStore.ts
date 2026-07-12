@@ -175,9 +175,13 @@ export const useEditorStore = create<EditorState & EditorActions>()(
         s.id === activeSlideId
           ? {
               ...s,
-              objects: s.objects.map((o) =>
-                selectedIds.includes(o.id) ? { ...o, x: o.x + dx, y: o.y + dy } : o
-              ),
+              objects: s.objects.map((o) => {
+                if (!selectedIds.includes(o.id)) return o;
+                if (o.type === 'line' || o.type === 'arrow') {
+                  return { ...o, points: o.points.map((p, i) => p + (i % 2 === 0 ? dx : dy)) };
+                }
+                return { ...o, x: o.x + dx, y: o.y + dy };
+              }),
             }
           : s
       ),
@@ -199,7 +203,7 @@ export const useEditorStore = create<EditorState & EditorActions>()(
               objects: s.objects.map((o) => {
                 const d = deltas.get(o.id);
                 if (!d) return o;
-                if (o.type === 'line') {
+                if (o.type === 'line' || o.type === 'arrow') {
                   return { ...o, points: o.points.map((p, i) => p + (i % 2 === 0 ? d.dx : d.dy)) };
                 }
                 return { ...o, x: o.x + d.dx, y: o.y + d.dy };
@@ -229,7 +233,7 @@ export const useEditorStore = create<EditorState & EditorActions>()(
       if (!obj) continue;
       const newId = uuidv4();
       newIds.push(newId);
-      if (obj.type === 'line') {
+      if (obj.type === 'line' || obj.type === 'arrow') {
         newObjects.push({
           ...obj,
           id: newId,

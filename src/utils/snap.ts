@@ -14,7 +14,8 @@ function getBounds(obj: CanvasObject) {
       return { minX: obj.x - obj.radius, maxX: obj.x + obj.radius, minY: obj.y - obj.radius, maxY: obj.y + obj.radius };
     case 'text':
       return { minX: obj.x, maxX: obj.x + (obj.width ?? obj.text.length * obj.fontSize * 0.6), minY: obj.y, maxY: obj.y + obj.fontSize };
-    case 'line': {
+    case 'line':
+    case 'arrow': {
       const xs = obj.points.filter((_, i) => i % 2 === 0);
       const ys = obj.points.filter((_, i) => i % 2 === 1);
       return {

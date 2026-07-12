@@ -1,4 +1,4 @@
-export type Tool = 'select' | 'rect' | 'circle' | 'text' | 'line';
+export type Tool = 'select' | 'rect' | 'circle' | 'text' | 'line' | 'arrow';
 
 export interface CanvasSize {
   width: number;
@@ -7,7 +7,7 @@ export interface CanvasSize {
 
 export interface BaseObject {
   id: string;
-  type: 'rect' | 'circle' | 'text' | 'line';
+  type: 'rect' | 'circle' | 'text' | 'line' | 'arrow';
   x: number;
   y: number;
   rotation?: number;
@@ -46,7 +46,19 @@ export interface LineObject extends BaseObject {
   strokeWidth: number;
 }
 
-export type CanvasObject = RectObject | CircleObject | TextObject | LineObject;
+export interface ArrowObject extends BaseObject {
+  type: 'arrow';
+  points: number[]; // [x1, y1, x2, y2, ...]
+  stroke: string;
+  strokeWidth: number;
+  pointerLength?: number;
+  pointerWidth?: number;
+  pointerAtEnding?: boolean;
+  pointerAtBeginning?: boolean;
+  fill?: string;
+}
+
+export type CanvasObject = RectObject | CircleObject | TextObject | LineObject | ArrowObject;
 
 export interface Slide {
   id: string;
