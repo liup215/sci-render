@@ -1,12 +1,13 @@
 # Active Context
 
 ## Current Focus
-MVP polished with keyboard shortcuts and tool cursors. Decide between local persistence or shape-library expansion next.
+Git repository initialized and public GitHub repo created (https://github.com/liup215/sci-render). Next feature: local persistence so work survives reloads.
 
 ## Decisions Made
 - Tech stack: React + TypeScript + Vite + react-konva + Zustand.
 - First feature slice: canvas editor (zoom, grid, rulers, alignment, multi-slide).
 - Repository root: `C:\Users\22569\Documents\20-Projects\sci-render`.
+- Git remote: public GitHub repo `liup215/sci-render`, default branch `main`.
 - Keyboard shortcuts are global and ignored while typing in inputs.
 
 ## Next Steps

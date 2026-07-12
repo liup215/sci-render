@@ -11,6 +11,7 @@
 - Global keyboard shortcuts: V/R/C/L/T tools, Esc cancel, Ctrl+A select all, Ctrl+D duplicate, arrow-key nudge, Space pan, Delete remove.
 - Tool-specific mouse cursors (crosshair for drawing tools, grab/grabbing for pan).
 - Production build passes TypeScript and Vite bundling.
+- Git repository initialized and pushed to public GitHub repo `https://github.com/liup215/sci-render` on `main`.
 
 ## In Progress
 - Deciding next feature: local persistence vs. shape-library expansion.
