@@ -34,6 +34,7 @@ export function CanvasStage() {
     setStagePos,
     deleteObjects,
     startEditingText,
+    setTool,
   } = useEditorStore();
 
   const activeSlide = slides.find((s) => s.id === activeSlideId);
@@ -191,11 +192,19 @@ export function CanvasStage() {
       return;
     }
 
-    // Start creating a shape
-    if (tool === 'text') {
-      if (clickedOnEmpty) {
-        setDrawingRef({ start: pos, current: pos, tempId: 'text-create' });
+    // For drawing tools, clicking an existing object selects it and returns to select mode.
+    if (!clickedOnEmpty) {
+      const targetId = e.target.id();
+      if (targetId && objects.some((o) => o.id === targetId)) {
+        setSelectedIds([targetId]);
+        setTool('select');
       }
+      return;
+    }
+
+    // Start creating a shape on empty canvas.
+    if (tool === 'text') {
+      setDrawingRef({ start: pos, current: pos, tempId: 'text-create' });
       return;
     }
 

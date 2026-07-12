@@ -10,6 +10,7 @@ Key layout changes (BioRender-style v3):
 - `<Toolbox />` now renders top-level categories: Select, Shapes, Lines, Text, Draw, Library. Clicking a category highlights it and passes the selection upward.
 - New `<ToolPalette />` renders the sub-tools for the active category (e.g., Shapes → Rectangle / Circle; Lines → Line / Arrow) and swaps in `<IconLibraryContent />` for the Library category.
 - `IconLibraryContent` still provides search and categorized preset icons, now accessed through the Library category.
+- Drawing-tool interaction: when a drawing tool (rectangle, circle, line, arrow, text, pen) is active and the user clicks on an existing object, the click selects the top-most object and switches back to the select tool instead of creating a new shape. The left-panel category highlights also sync to the current tool so the UI stays consistent.
 - Slides remain in a "Slides" tab inside the right-side `PropertiesPanel`.
 - Align and ordering buttons are still removed from the top header; ordering lives in the Layers tab.
 
