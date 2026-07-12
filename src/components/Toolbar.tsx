@@ -14,11 +14,7 @@ const TOOLS: { id: Tool; label: string }[] = [
   { id: 'pen', label: 'Pen (P)' },
 ];
 
-interface ToolbarProps {
-  onOpenIconLibrary: () => void;
-}
-
-export function Toolbar({ onOpenIconLibrary }: ToolbarProps) {
+export function Toolbar() {
   const {
     tool,
     setTool,
@@ -42,13 +38,15 @@ export function Toolbar({ onOpenIconLibrary }: ToolbarProps) {
     past,
     future,
     exportSvg,
+    bringToFront,
+    sendToBack,
+    moveForward,
+    moveBackward,
   } = useEditorStore();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleExport = () => {
-    // Deferred to a parent/editor component that holds stage ref.
-    // We dispatch a custom event so App can call stage.toDataURL().
     window.dispatchEvent(new CustomEvent('sci-render:export'));
   };
 
@@ -90,7 +88,7 @@ export function Toolbar({ onOpenIconLibrary }: ToolbarProps) {
 
   return (
     <div className="toolbar">
-      <div className="toolbar-group">
+      <div className="toolbar-group toolbar-tools">
         {TOOLS.map((t) => (
           <button
             key={t.id}
@@ -104,19 +102,24 @@ export function Toolbar({ onOpenIconLibrary }: ToolbarProps) {
       </div>
 
       <div className="toolbar-group">
-        <button onClick={toggleGrid} className={gridVisible ? 'active' : ''}>
-          Grid
+        <button onClick={undo} disabled={past.length === 0} title="Undo (Ctrl+Z)">
+          Undo
         </button>
-        <button onClick={toggleRulers} className={rulersVisible ? 'active' : ''}>
-          Rulers
+        <button onClick={redo} disabled={future.length === 0} title="Redo (Ctrl+Y / Ctrl+Shift+Z)">
+          Redo
         </button>
-        <button onClick={toggleSnap} className={snapEnabled ? 'active' : ''}>
-          Snap
+        <button onClick={groupSelected} disabled={selectedIds.length < 2} title="Group (Ctrl+G)">
+          Group
+        </button>
+        <button onClick={ungroupSelected} disabled={selectedIds.length === 0} title="Ungroup (Ctrl+Shift+G)">
+          Ungroup
+        </button>
+        <button onClick={() => deleteObjects()} disabled={selectedIds.length === 0} title="Delete">
+          Delete
         </button>
       </div>
 
       <div className="toolbar-group">
-        <span>Align:</span>
         {(['left', 'center', 'right', 'top', 'middle', 'bottom'] as AlignMode[]).map((a) => (
           <button
             key={a}
@@ -130,38 +133,50 @@ export function Toolbar({ onOpenIconLibrary }: ToolbarProps) {
       </div>
 
       <div className="toolbar-group">
-        <span>Group:</span>
-        <button onClick={groupSelected} disabled={selectedIds.length < 2}>
-          Group
+        <button onClick={bringToFront} disabled={selectedIds.length === 0} title="Bring to front">
+          Front
         </button>
-        <button onClick={ungroupSelected} disabled={selectedIds.length === 0}>
-          Ungroup
+        <button onClick={moveForward} disabled={selectedIds.length === 0} title="Move forward">
+          Up
         </button>
-      </div>
-
-      <div className="toolbar-group">
-        <button onClick={() => setZoom(zoom / 1.1)}>-</button>
-        <span>{Math.round(zoom * 100)}%</span>
-        <button onClick={() => setZoom(zoom * 1.1)}>+</button>
-        <button onClick={() => setZoom(1)}>Reset</button>
-      </div>
-
-      <div className="toolbar-group">
-        <button onClick={undo} disabled={past.length === 0} title="Undo (Ctrl+Z)">
-          Undo
+        <button onClick={moveBackward} disabled={selectedIds.length === 0} title="Move backward">
+          Down
         </button>
-        <button onClick={redo} disabled={future.length === 0} title="Redo (Ctrl+Y / Ctrl+Shift+Z)">
-          Redo
+        <button onClick={sendToBack} disabled={selectedIds.length === 0} title="Send to back">
+          Back
         </button>
       </div>
 
       <div className="toolbar-group">
-        <button onClick={() => fileInputRef.current?.click()}>Image</button>
-        <button onClick={onOpenIconLibrary}>Icons</button>
+        <button onClick={toggleGrid} className={gridVisible ? 'active' : ''} title="Toggle grid">
+          Grid
+        </button>
+        <button onClick={toggleRulers} className={rulersVisible ? 'active' : ''} title="Toggle rulers">
+          Rulers
+        </button>
+        <button onClick={toggleSnap} className={snapEnabled ? 'active' : ''} title="Toggle snap">
+          Snap
+        </button>
+      </div>
+
+      <div className="toolbar-group">
+        <button onClick={() => fileInputRef.current?.click()} title="Upload image">
+          Image
+        </button>
         <button onClick={handleExport}>Export PNG</button>
         <button onClick={exportSvg}>Export SVG</button>
-        <button onClick={() => deleteObjects()} disabled={selectedIds.length === 0}>
-          Delete
+      </div>
+
+      <div className="toolbar-group toolbar-zoom">
+        <button onClick={() => setZoom(zoom / 1.1)} title="Zoom out">
+          −
+        </button>
+        <span className="zoom-value">{Math.round(zoom * 100)}%</span>
+        <button onClick={() => setZoom(zoom * 1.1)} title="Zoom in">
+          +
+        </button>
+        <button onClick={() => setZoom(1)} title="Reset zoom">
+          Reset
         </button>
       </div>
 

@@ -1,9 +1,15 @@
 # Active Context
 
 ## Current Focus
-Freehand pen / path drawing is implemented and verified. The toolbar now has a "Pen (P)" tool that captures mouse-drag points, converts them to normalized SVG path data, and renders live via `Konva.Path`. Drawn paths reuse the existing `PathObject` type, so they work with selection, transform, layers, grouping, undo/redo, persistence, and SVG export without additional renderer changes.
+The main application UI has been reorganized into a BioRender-style layout: a single dark top header that combines the brand and a grouped toolbar, a left sidebar with tabbed "Slides" and "Icons" panels, a central canvas area, and the existing right-side Properties/Layers panel.
 
-Verification confirmed in a production build (`npm run build && npm run preview`) to avoid the Vite dev HMR store-duplication issue: drawn paths appear in the Layers panel and are included in exported SVG.
+Key layout changes:
+- `App.tsx` now renders `<Toolbar />` inside the header and `<LeftPanel />` in the body.
+- `LeftPanel` is a new tabbed component that embeds `SlidePanel` and `IconLibraryContent`.
+- `IconLibraryContent` is a reusable icon grid extracted from the old floating `IconLibrary` panel; the old `IconLibrary` still exists as a floating wrapper for any future modal use.
+- `Toolbar` has been regrouped into: drawing tools, edit actions (undo/redo/group/ungroup/delete), alignment, ordering (front/up/down/back), view toggles (grid/rulers/snap), insert/export (image/PNG/SVG), and zoom controls.
+
+Verification confirmed in a production build (`npm run build && npm run preview`) to avoid the Vite dev HMR store-duplication issue.
 
 ## Decisions Made
 - Tech stack: React + TypeScript + Vite + react-konva + Zustand.
