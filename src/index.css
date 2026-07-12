@@ -215,3 +215,17 @@ input[type='color'] {
   height: 28px;
 }
 
+.reset-button {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid #ef4444;
+  background: #fef2f2;
+  color: #b91c1c;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.reset-button:hover {
+  background: #fee2e2;
+}
+

@@ -9,6 +9,7 @@ export function PropertiesPanel() {
   const updateObject = useEditorStore((s) => s.updateObject);
   const setCanvasSize = useEditorStore((s) => s.setCanvasSize);
   const setCanvasColor = useEditorStore((s) => s.setCanvasColor);
+  const resetSession = useEditorStore((s) => s.resetSession);
   const canvasSize = useEditorStore((s) => s.canvasSize);
   const canvasColor = useEditorStore((s) => s.canvasColor);
 
@@ -41,6 +42,16 @@ export function PropertiesPanel() {
           onChange={(e) => setCanvasColor(e.target.value)}
         />
       </label>
+      <button
+        className="reset-button"
+        onClick={() => {
+          if (confirm('Reset session? This clears all slides and objects.')) {
+            resetSession();
+          }
+        }}
+      >
+        Reset session
+      </button>
 
       {selected && (
         <>

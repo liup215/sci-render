@@ -12,6 +12,8 @@
 - Tool-specific mouse cursors (crosshair for drawing tools, grab/grabbing for pan).
 - Production build passes TypeScript and Vite bundling.
 - Git repository initialized and pushed to public GitHub repo `https://github.com/liup215/sci-render` on `main`.
+- Local persistence via Zustand persist to localStorage; state restored on reload.
+- "Reset session" button clears all slides and objects from state and localStorage.
 
 ## In Progress
 - Deciding next feature: local persistence vs. shape-library expansion.

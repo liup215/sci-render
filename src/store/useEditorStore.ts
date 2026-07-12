@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import { v4 as uuidv4 } from 'uuid';
 import type { CanvasObject, Slide, Tool, CanvasSize } from '../types';
 import { alignObjects, type AlignMode, type SnapResult } from '../utils/snap';
@@ -42,6 +43,7 @@ interface EditorActions {
   selectAll: () => void;
   duplicateSelected: () => void;
   setGuides: (guides: SnapResult['guides']) => void;
+  resetSession: () => void;
 }
 
 const createBlankSlide = (name = 'Slide 1'): Slide => ({
@@ -52,7 +54,7 @@ const createBlankSlide = (name = 'Slide 1'): Slide => ({
 
 const initialSlide = createBlankSlide();
 
-export const useEditorStore = create<EditorState & EditorActions>((set, get) => ({
+const defaultState: EditorState = {
   slides: [initialSlide],
   activeSlideId: initialSlide.id,
   selectedIds: [],
@@ -65,6 +67,12 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
   rulersVisible: false,
   snapEnabled: true,
   guides: [],
+};
+
+export const useEditorStore = create<EditorState & EditorActions>()(
+  persist(
+    (set, get) => ({
+      ...defaultState,
 
   setTool: (tool) => set({ tool, selectedIds: tool !== 'select' ? [] : get().selectedIds, guides: [] }),
 
@@ -240,4 +248,26 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
   },
 
   setGuides: (guides) => set({ guides }),
-}));
+
+  resetSession: () => {
+    const slide = createBlankSlide();
+    set({
+      slides: [slide],
+      activeSlideId: slide.id,
+      selectedIds: [],
+      tool: 'select',
+      zoom: 1,
+      stagePos: { x: 0, y: 0 },
+      canvasSize: { width: 800, height: 600 },
+      canvasColor: '#ffffff',
+      gridVisible: true,
+      rulersVisible: false,
+      snapEnabled: true,
+      guides: [],
+    });
+  },
+}), {
+  name: 'sci-render-storage',
+  storage: createJSONStorage(() => localStorage),
+})
+);
