@@ -22,6 +22,7 @@
 - Undo / redo: store-level history stacks with pre-mutation snapshots; toolbar buttons and `Ctrl+Z` / `Ctrl+Y` / `Ctrl+Shift+Z` shortcuts; verified add/update undo/redo in browser.
 - Rulers UI: toolbar "Rulers" toggle shows/hides horizontal and vertical canvas rulers around the stage; ticks and labels scale with zoom and pan.
 - Text editing enhancement: inline `<textarea>` editor on double-click; `TextObject` now supports `fontFamily`, `fontStyle`, and `align`; Properties panel adds font family/size, bold/italic, and alignment controls.
+- Copy / paste: `Ctrl+C` copies selected objects to an in-memory clipboard, `Ctrl+V` pastes cloned objects offset by (20, 20) and selects the pasted set; supports groups and multiple selections.
 
 ## In Progress
 - Deciding the next MVP feature (export options, UI polish, or advanced drawing tools).

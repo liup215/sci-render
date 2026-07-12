@@ -1,7 +1,7 @@
 # Active Context
 
 ## Current Focus
-Fixed text creation and inline editing activation. Text tool now creates a text object on mouseup and immediately opens the inline editor. Select-tool double-click on a text object triggers inline editing via Konva `dblclick` plus a 300ms click-time fallback. Properties panel text editing remains available as an alternative.
+Implemented copy/paste for canvas objects. Selected objects are cloned into an in-memory clipboard with `Ctrl+C` and pasted with a 20px offset using `Ctrl+V`; pasted objects become the new selection. The implementation reuses the existing `cloneObject` helper, so groups, arrows, lines, paths, images, and text are all supported.
 
 ## Decisions Made
 - Tech stack: React + TypeScript + Vite + react-konva + Zustand.

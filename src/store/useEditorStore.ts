@@ -18,6 +18,7 @@ export interface EditorState {
   snapEnabled: boolean;
   guides: SnapResult['guides'];
   editingTextId: string | null;
+  clipboard: CanvasObject[] | null;
   past: Omit<EditorState, 'past' | 'future'>[];
   future: Omit<EditorState, 'past' | 'future'>[];
 }
@@ -47,6 +48,8 @@ interface EditorActions {
   alignSelected: (align: AlignMode) => void;
   selectAll: () => void;
   duplicateSelected: () => void;
+  copySelected: () => void;
+  paste: () => void;
   groupSelected: () => void;
   ungroupSelected: () => void;
   bringToFront: () => void;
@@ -188,6 +191,7 @@ const defaultState: EditorState = {
   snapEnabled: true,
   guides: [],
   editingTextId: null,
+  clipboard: null,
   past: [],
   future: [],
 };
@@ -368,6 +372,38 @@ export const useEditorStore = create<EditorState & EditorActions>()(
     for (const id of selectedIds) {
       const obj = slide.objects.find((o) => o.id === id);
       if (!obj) continue;
+      const clone = cloneObject(obj, 20, 20);
+      newObjects.push(clone);
+      newIds.push(clone.id);
+    }
+    set({
+      slides: slides.map((s) =>
+        s.id === activeSlideId ? { ...s, objects: [...s.objects, ...newObjects] } : s
+      ),
+      selectedIds: newIds,
+    });
+  }),
+
+  copySelected: () => {
+    const { slides, activeSlideId, selectedIds } = get();
+    if (!activeSlideId || selectedIds.length === 0) return;
+    const slide = slides.find((s) => s.id === activeSlideId);
+    if (!slide) return;
+    const clones: CanvasObject[] = [];
+    for (const id of selectedIds) {
+      const obj = slide.objects.find((o) => o.id === id);
+      if (!obj) continue;
+      clones.push(cloneObject(obj, 0, 0));
+    }
+    set({ clipboard: clones });
+  },
+
+  paste: () => withHistory(() => {
+    const { slides, activeSlideId, clipboard } = get();
+    if (!activeSlideId || !clipboard || clipboard.length === 0) return;
+    const newObjects: CanvasObject[] = [];
+    const newIds: string[] = [];
+    for (const obj of clipboard) {
       const clone = cloneObject(obj, 20, 20);
       newObjects.push(clone);
       newIds.push(clone.id);
@@ -573,6 +609,7 @@ export const useEditorStore = create<EditorState & EditorActions>()(
       snapEnabled: true,
       guides: [],
       editingTextId: null,
+      clipboard: null,
       past: [],
       future: [],
     });

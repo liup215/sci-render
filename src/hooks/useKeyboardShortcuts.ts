@@ -55,6 +55,18 @@ export function useKeyboardShortcuts() {
         return;
       }
 
+      // Copy / Paste
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'c') {
+        e.preventDefault();
+        store.copySelected();
+        return;
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'v') {
+        e.preventDefault();
+        store.paste();
+        return;
+      }
+
       // Group / Ungroup
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'g') {
         e.preventDefault();
