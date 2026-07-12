@@ -1,14 +1,22 @@
 import { useEditorStore } from '../store/useEditorStore';
 import type { Tool } from '../types';
 
-const TOOLS: { id: Tool; label: string }[] = [
-  { id: 'select', label: 'Select (V)' },
-  { id: 'rect', label: 'Rectangle (R)' },
-  { id: 'circle', label: 'Circle (C)' },
-  { id: 'line', label: 'Line (L)' },
-  { id: 'arrow', label: 'Arrow (A)' },
-  { id: 'text', label: 'Text (T)' },
-  { id: 'pen', label: 'Pen (P)' },
+const TOOL_LABELS: Record<Tool, string> = {
+  select: 'Select (V)',
+  rect: 'Rectangle (R)',
+  circle: 'Circle (C)',
+  line: 'Line (L)',
+  arrow: 'Arrow (A)',
+  text: 'Text (T)',
+  pen: 'Pen (P)',
+};
+
+const GROUPS: { label: string; tools: Tool[] }[] = [
+  { label: 'Select', tools: ['select'] },
+  { label: 'Shapes', tools: ['rect', 'circle'] },
+  { label: 'Lines', tools: ['line', 'arrow'] },
+  { label: 'Text', tools: ['text'] },
+  { label: 'Draw', tools: ['pen'] },
 ];
 
 export function Toolbox() {
@@ -16,15 +24,23 @@ export function Toolbox() {
 
   return (
     <div className="toolbox">
-      {TOOLS.map((t) => (
-        <button
-          key={t.id}
-          className={tool === t.id ? 'active' : ''}
-          onClick={() => setTool(t.id)}
-          title={t.label}
-        >
-          {t.label.split(' ')[0]}
-        </button>
+      {GROUPS.map((group) => (
+        <div key={group.label} className="toolbox-group">
+          <span className="toolbox-group-label">{group.label}</span>
+          {group.tools.map((id) => {
+            const label = TOOL_LABELS[id];
+            return (
+              <button
+                key={id}
+                className={tool === id ? 'active' : ''}
+                onClick={() => setTool(id)}
+                title={label}
+              >
+                {label.split(' ')[0]}
+              </button>
+            );
+          })}
+        </div>
       ))}
     </div>
   );

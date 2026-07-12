@@ -25,7 +25,7 @@
 - Copy / paste: `Ctrl+C` copies selected objects to an in-memory clipboard, `Ctrl+V` pastes cloned objects offset by (20, 20) and selects the pasted set; supports groups and multiple selections.
 - SVG vector export: toolbar "Export SVG" button generates true SVG from active slide objects (rect, circle, text, line, arrow, image, path, group) with proper transforms, markers, and multi-line text; downloads as `<slide-name>.svg`.
 - Freehand pen tool: toolbar "Pen (P)" button and `P` shortcut; mouse drag creates a `PathObject` with normalized SVG path data; supports selection, transform, layers, grouping, undo/redo, persistence, and SVG export.
-- BioRender-style UI reorganization v2: minimal dark top header with brand + global actions; left sidebar split into a narrow vertical drawing toolbox and a large searchable icon library; right-side Properties / Layers / Slides tabs; central canvas.
+- BioRender-style UI reorganization v2: minimal dark top header with brand + global actions; left sidebar split into a narrow vertical drawing toolbox (grouped as Select / Shapes / Lines / Text / Draw) and a large searchable icon library; right-side Properties / Layers / Slides tabs; central canvas.
 
 ## In Progress
 - Deciding the next MVP feature after the UI pass (e.g., bezier curves / custom shapes, PDF export, color picker popover, or project JSON import/export).

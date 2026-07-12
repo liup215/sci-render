@@ -6,7 +6,8 @@ The main application UI has been reorganized into a BioRender-style layout: a si
 Key layout changes (BioRender-style v2):
 - `App.tsx` renders a minimal `<Toolbar />` inside the header and `<LeftPanel />` in the body.
 - Top header now only holds global actions: brand, undo/redo/delete, view toggles (grid/rulers/snap), insert/export (image/PNG/SVG), and zoom.
-- `LeftPanel` is a two-column sidebar: a narrow vertical `<Toolbox />` on the left (Select/Rect/Circle/Line/Arrow/Text/Pen) and a large searchable `IconLibraryContent` on the right.
+- `LeftPanel` is a two-column sidebar: a narrow vertical `<Toolbox />` on the left and a large searchable `IconLibraryContent` on the right.
+- `<Toolbox />` now groups tools logically with small labels: Select, Shapes (Rectangle/Circle), Lines (Line/Arrow), Text, Draw (Pen).
 - `IconLibraryContent` now includes a search input that filters presets by name within the active category, plus an empty state.
 - Slides have moved out of the left sidebar into a new "Slides" tab in the right-side `PropertiesPanel`, so the right panel now has Properties / Layers / Slides tabs.
 - Align and ordering buttons were removed from the top header to reduce clutter; ordering is still available in the Layers tab, and alignment can be reintroduced later via a context menu or dedicated properties section.
