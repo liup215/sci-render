@@ -7,7 +7,7 @@ export interface CanvasSize {
 
 export interface BaseObject {
   id: string;
-  type: 'rect' | 'circle' | 'text' | 'line' | 'arrow';
+  type: 'rect' | 'circle' | 'text' | 'line' | 'arrow' | 'image';
   x: number;
   y: number;
   rotation?: number;
@@ -58,7 +58,14 @@ export interface ArrowObject extends BaseObject {
   fill?: string;
 }
 
-export type CanvasObject = RectObject | CircleObject | TextObject | LineObject | ArrowObject;
+export interface ImageObject extends BaseObject {
+  type: 'image';
+  src: string; // base64 data URL
+  width: number;
+  height: number;
+}
+
+export type CanvasObject = RectObject | CircleObject | TextObject | LineObject | ArrowObject | ImageObject;
 
 export interface Slide {
   id: string;

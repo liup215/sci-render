@@ -1,6 +1,7 @@
 import { useRef } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import { useEditorStore } from '../store/useEditorStore';
-import type { Tool } from '../types';
+import type { Tool, CanvasObject } from '../types';
 import type { AlignMode } from '../utils/snap';
 
 const TOOLS: { id: Tool; label: string }[] = [
@@ -25,6 +26,8 @@ export function Toolbar() {
     selectedIds,
     alignSelected,
     deleteObjects,
+    addObject,
+    canvasSize,
   } = useEditorStore();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -37,6 +40,38 @@ export function Toolbar() {
 
   const handleAlign = (align: AlignMode) => {
     alignSelected(align);
+  };
+
+  const handleImageUpload = async (file: File) => {
+    const dataUrl = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+
+    const img = new Image();
+    img.onload = () => {
+      const maxDim = 200;
+      let width = img.naturalWidth;
+      let height = img.naturalHeight;
+      if (width > maxDim || height > maxDim) {
+        const scale = Math.min(maxDim / width, maxDim / height);
+        width *= scale;
+        height *= scale;
+      }
+      addObject({
+        id: uuidv4(),
+        type: 'image',
+        src: dataUrl,
+        x: (canvasSize.width - width) / 2,
+        y: (canvasSize.height - height) / 2,
+        width,
+        height,
+        draggable: true,
+      } as CanvasObject);
+    };
+    img.src = dataUrl;
   };
 
   return (
@@ -85,6 +120,7 @@ export function Toolbar() {
       </div>
 
       <div className="toolbar-group">
+        <button onClick={() => fileInputRef.current?.click()}>Image</button>
         <button onClick={handleExport}>Export PNG</button>
         <button onClick={() => deleteObjects()} disabled={selectedIds.length === 0}>
           Delete
@@ -97,7 +133,8 @@ export function Toolbar() {
         accept="image/*"
         style={{ display: 'none' }}
         onChange={(e) => {
-          // Future: upload image to canvas
+          const file = e.target.files?.[0];
+          if (file) handleImageUpload(file);
           e.target.value = '';
         }}
       />

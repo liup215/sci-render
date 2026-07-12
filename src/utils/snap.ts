@@ -25,6 +25,8 @@ function getBounds(obj: CanvasObject) {
         maxY: Math.max(...ys),
       };
     }
+    case 'image':
+      return { minX: obj.x, maxX: obj.x + obj.width, minY: obj.y, maxY: obj.y + obj.height };
   }
 }
 

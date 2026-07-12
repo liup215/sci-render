@@ -1,7 +1,7 @@
 # Active Context
 
 ## Current Focus
-Arrow tool added to the shape library. Next feature: uploadable image object or basic icon library.
+Image upload object added. Next feature: a basic icon library or grouped objects.
 
 ## Decisions Made
 - Tech stack: React + TypeScript + Vite + react-konva + Zustand.
@@ -11,7 +11,7 @@ Arrow tool added to the shape library. Next feature: uploadable image object or 
 - Keyboard shortcuts are global and ignored while typing in inputs.
 
 ## Next Steps
-1. Add uploadable image object to the canvas.
+1. Add a basic icon/shape library with reusable presets.
 2. Consider Tailwind or a component library for UI polish.
 3. Decide on backend persistence strategy post-MVP.
 

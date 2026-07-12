@@ -15,6 +15,7 @@
 - Local persistence via Zustand persist to localStorage; state restored on reload.
 - "Reset session" button clears all slides and objects from state and localStorage.
 - Arrow drawing tool added with toolbar button, `A` shortcut, Konva Arrow rendering, and persistence support.
+- Image upload object added: toolbar Image button loads a local image as a base64 object, scaled to max 200px, draggable, transformable, and persisted.
 
 ## In Progress
 - Deciding next feature: local persistence vs. shape-library expansion.

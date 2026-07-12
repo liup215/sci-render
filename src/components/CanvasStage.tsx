@@ -253,8 +253,14 @@ export function CanvasStage() {
       const y2 = Math.max(start.y, current.y);
       const inside = objects
         .filter((o) => {
-          const cx = o.type === 'circle' ? o.x : o.x + (o.type === 'rect' ? o.width / 2 : 0);
-          const cy = o.type === 'circle' ? o.y : o.y + (o.type === 'rect' ? o.height / 2 : 0);
+          const cx =
+            o.type === 'circle'
+              ? o.x
+              : o.x + (o.type === 'rect' ? o.width / 2 : o.type === 'image' ? o.width / 2 : 0);
+          const cy =
+            o.type === 'circle'
+              ? o.y
+              : o.y + (o.type === 'rect' ? o.height / 2 : o.type === 'image' ? o.height / 2 : 0);
           // Simple center-point selection for text/line
           if (o.type === 'text') return o.x >= x1 && o.x <= x2 && o.y >= y1 && o.y <= y2;
           if (o.type === 'line' || o.type === 'arrow') {
@@ -328,6 +334,14 @@ export function CanvasStage() {
         // Apply scale to points relative to origin
         updateObject(id, {
           points: obj.points.map((p, i) => p * (i % 2 === 0 ? scaleX : scaleY)),
+          rotation,
+        });
+      } else if (obj.type === 'image') {
+        updateObject(id, {
+          x,
+          y,
+          width: Math.max(5, obj.width * scaleX),
+          height: Math.max(5, obj.height * scaleY),
           rotation,
         });
       }

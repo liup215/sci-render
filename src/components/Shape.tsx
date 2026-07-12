@@ -1,5 +1,5 @@
-import { useRef } from 'react';
-import { Rect, Circle, Text, Line, Arrow } from 'react-konva';
+import { useRef, useState, useEffect } from 'react';
+import { Rect, Circle, Text, Line, Arrow, Image } from 'react-konva';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import type { CanvasObject } from '../types';
 import { useEditorStore } from '../store/useEditorStore';
@@ -13,7 +13,22 @@ interface ShapeProps {
 const GRID_SIZE = 20;
 const SNAP_THRESHOLD = 6;
 
+function useImage(src: string | undefined) {
+  const [image, setImage] = useState<HTMLImageElement | null>(null);
+  useEffect(() => {
+    if (!src) return;
+    const img = new window.Image();
+    img.onload = () => setImage(img);
+    img.src = src;
+    return () => {
+      img.onload = null;
+    };
+  }, [src]);
+  return image;
+}
+
 export function Shape({ object, isSelected }: ShapeProps) {
+  const image = useImage(object.type === 'image' ? object.src : undefined);
   const tool = useEditorStore((s) => s.tool);
   const updateObject = useEditorStore((s) => s.updateObject);
   const setSelectedIds = useEditorStore((s) => s.setSelectedIds);
@@ -202,6 +217,25 @@ export function Shape({ object, isSelected }: ShapeProps) {
           onDragMove={handleDragMove}
           onDragEnd={handleDragEnd}
           hitStrokeWidth={Math.max(object.strokeWidth, 8)}
+        />
+      );
+    case 'image':
+      if (!image) return null;
+      return (
+        <Image
+          id={object.id}
+          x={object.x}
+          y={object.y}
+          width={object.width}
+          height={object.height}
+          image={image}
+          rotation={object.rotation ?? 0}
+          draggable={draggable}
+          onClick={handleClick}
+          onDblClick={handleDblClick}
+          onDragStart={handleDragStart}
+          onDragMove={handleDragMove}
+          onDragEnd={handleDragEnd}
         />
       );
   }
