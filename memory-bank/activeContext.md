@@ -1,7 +1,7 @@
 # Active Context
 
 ## Current Focus
-Implemented copy/paste for canvas objects. Selected objects are cloned into an in-memory clipboard with `Ctrl+C` and pasted with a 20px offset using `Ctrl+V`; pasted objects become the new selection. The implementation reuses the existing `cloneObject` helper, so groups, arrows, lines, paths, images, and text are all supported.
+Copy/paste for canvas objects is complete and verified. Selected objects are cloned into an in-memory clipboard with `Ctrl+C` and pasted with a 20px offset using `Ctrl+V`; pasted objects become the new selection. The implementation reuses the existing `cloneObject` helper, so groups, arrows, lines, paths, images, and text are all supported. The earlier "shortcuts had no effect" report was traced to a Vite dev-server module duplication when testing via dynamic `import('/src/store/useEditorStore.ts')`; real UI interactions use a single store instance and copy/paste works correctly.
 
 ## Decisions Made
 - Tech stack: React + TypeScript + Vite + react-konva + Zustand.
