@@ -55,6 +55,17 @@ export function useKeyboardShortcuts() {
         return;
       }
 
+      // Group / Ungroup
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'g') {
+        e.preventDefault();
+        if (e.shiftKey) {
+          store.ungroupSelected();
+        } else {
+          store.groupSelected();
+        }
+        return;
+      }
+
       // Nudge with arrow keys
       if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
         if (selectedIds.length === 0) return;

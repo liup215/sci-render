@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from 'react';
-import { Rect, Circle, Text, Line, Arrow, Image } from 'react-konva';
+import { Rect, Circle, Text, Line, Arrow, Image, Group } from 'react-konva';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import type { CanvasObject } from '../types';
 import { useEditorStore } from '../store/useEditorStore';
@@ -8,6 +8,7 @@ import { snapDrag } from '../utils/snap';
 interface ShapeProps {
   object: CanvasObject;
   isSelected: boolean;
+  interactive?: boolean;
 }
 
 const GRID_SIZE = 20;
@@ -27,7 +28,7 @@ function useImage(src: string | undefined) {
   return image;
 }
 
-export function Shape({ object, isSelected }: ShapeProps) {
+export function Shape({ object, isSelected, interactive = true }: ShapeProps) {
   const image = useImage(object.type === 'image' ? object.src : undefined);
   const tool = useEditorStore((s) => s.tool);
   const updateObject = useEditorStore((s) => s.updateObject);
@@ -43,6 +44,7 @@ export function Shape({ object, isSelected }: ShapeProps) {
   const startPosRef = useRef({ x: object.x, y: object.y });
 
   const handleClick = (e: KonvaEventObject<MouseEvent>) => {
+    if (!interactive) return;
     e.cancelBubble = true;
     if (tool !== 'select') return;
     if (e.evt.shiftKey) {
@@ -53,6 +55,7 @@ export function Shape({ object, isSelected }: ShapeProps) {
   };
 
   const handleDblClick = (e: KonvaEventObject<MouseEvent>) => {
+    if (!interactive) return;
     e.cancelBubble = true;
     if (object.type === 'text') {
       const next = window.prompt('Edit text', object.text);
@@ -115,7 +118,7 @@ export function Shape({ object, isSelected }: ShapeProps) {
     updateObject(object.id, { x: node.x(), y: node.y() });
   };
 
-  const draggable = tool === 'select';
+  const draggable = interactive && tool === 'select';
 
   switch (object.type) {
     case 'rect':
@@ -237,6 +240,25 @@ export function Shape({ object, isSelected }: ShapeProps) {
           onDragMove={handleDragMove}
           onDragEnd={handleDragEnd}
         />
+      );
+    case 'group':
+      return (
+        <Group
+          id={object.id}
+          x={object.x}
+          y={object.y}
+          width={object.width}
+          height={object.height}
+          draggable={draggable}
+          onClick={handleClick}
+          onDragStart={handleDragStart}
+          onDragMove={handleDragMove}
+          onDragEnd={handleDragEnd}
+        >
+          {object.children.map((child) => (
+            <Shape key={child.id} object={child} isSelected={false} interactive={false} />
+          ))}
+        </Group>
       );
   }
 }

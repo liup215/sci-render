@@ -1,7 +1,7 @@
 # Active Context
 
 ## Current Focus
-Image upload object added. Next feature: a basic icon library or grouped objects.
+Group / Ungroup objects implemented. Ready for next feature selection.
 
 ## Decisions Made
 - Tech stack: React + TypeScript + Vite + react-konva + Zustand.
@@ -11,9 +11,9 @@ Image upload object added. Next feature: a basic icon library or grouped objects
 - Keyboard shortcuts are global and ignored while typing in inputs.
 
 ## Next Steps
-1. Add a basic icon/shape library with reusable presets.
-2. Consider Tailwind or a component library for UI polish.
-3. Decide on backend persistence strategy post-MVP.
+1. Choose the next MVP feature (e.g., basic icon library, layers/z-index, undo/redo, or UI polish).
+2. Continue incremental implementation with build + browser verification.
+3. Commit and push after each feature slice.
 
 ## Open Questions
 - Whether to add Tailwind or another UI library after MVP core is stable.

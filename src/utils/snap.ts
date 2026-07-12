@@ -6,7 +6,7 @@ export interface SnapResult {
   guides: { orientation: 'vertical' | 'horizontal'; value: number }[];
 }
 
-function getBounds(obj: CanvasObject) {
+export function getBounds(obj: CanvasObject) {
   switch (obj.type) {
     case 'rect':
       return { minX: obj.x, maxX: obj.x + obj.width, minY: obj.y, maxY: obj.y + obj.height };
@@ -26,6 +26,8 @@ function getBounds(obj: CanvasObject) {
       };
     }
     case 'image':
+      return { minX: obj.x, maxX: obj.x + obj.width, minY: obj.y, maxY: obj.y + obj.height };
+    case 'group':
       return { minX: obj.x, maxX: obj.x + obj.width, minY: obj.y, maxY: obj.y + obj.height };
   }
 }

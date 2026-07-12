@@ -27,6 +27,8 @@ export function Toolbar() {
     alignSelected,
     deleteObjects,
     addObject,
+    groupSelected,
+    ungroupSelected,
     canvasSize,
   } = useEditorStore();
 
@@ -110,6 +112,16 @@ export function Toolbar() {
             {a[0].toUpperCase() + a.slice(1)}
           </button>
         ))}
+      </div>
+
+      <div className="toolbar-group">
+        <span>Group:</span>
+        <button onClick={groupSelected} disabled={selectedIds.length < 2}>
+          Group
+        </button>
+        <button onClick={ungroupSelected} disabled={selectedIds.length === 0}>
+          Ungroup
+        </button>
       </div>
 
       <div className="toolbar-group">

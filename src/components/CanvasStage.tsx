@@ -76,6 +76,8 @@ export function CanvasStage() {
 
     const nodes: Konva.Node[] = [];
     for (const id of selectedIds) {
+      const obj = objects.find((o) => o.id === id);
+      if (obj?.type === 'group') continue;
       const node = stage.findOne('#' + id);
       if (node) nodes.push(node);
     }
@@ -300,7 +302,7 @@ export function CanvasStage() {
     for (const node of transformer.nodes()) {
       const id = node.id();
       const obj = objects.find((o) => o.id === id);
-      if (!obj) continue;
+      if (!obj || obj.type === 'group') continue;
 
       const scaleX = node.scaleX();
       const scaleY = node.scaleY();

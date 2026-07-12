@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { v4 as uuidv4 } from 'uuid';
-import type { CanvasObject, Slide, Tool, CanvasSize } from '../types';
-import { alignObjects, type AlignMode, type SnapResult } from '../utils/snap';
+import type { CanvasObject, GroupObject, Slide, Tool, CanvasSize } from '../types';
+import { alignObjects, getBounds, type AlignMode, type SnapResult } from '../utils/snap';
 
 export interface EditorState {
   slides: Slide[];
@@ -42,6 +42,8 @@ interface EditorActions {
   alignSelected: (align: AlignMode) => void;
   selectAll: () => void;
   duplicateSelected: () => void;
+  groupSelected: () => void;
+  ungroupSelected: () => void;
   setGuides: (guides: SnapResult['guides']) => void;
   resetSession: () => void;
 }
@@ -53,6 +55,27 @@ const createBlankSlide = (name = 'Slide 1'): Slide => ({
 });
 
 const initialSlide = createBlankSlide();
+
+function cloneObject(obj: CanvasObject, dx: number, dy: number): CanvasObject {
+  const id = uuidv4();
+  if (obj.type === 'line' || obj.type === 'arrow') {
+    return {
+      ...obj,
+      id,
+      points: obj.points.map((p, i) => p + (i % 2 === 0 ? dx : dy)),
+    } as CanvasObject;
+  }
+  if (obj.type === 'group') {
+    return {
+      ...obj,
+      id,
+      x: obj.x + dx,
+      y: obj.y + dy,
+      children: obj.children.map((c) => cloneObject(c, 0, 0)),
+    } as CanvasObject;
+  }
+  return { ...obj, id, x: obj.x + dx, y: obj.y + dy } as CanvasObject;
+}
 
 const defaultState: EditorState = {
   slides: [initialSlide],
@@ -231,23 +254,110 @@ export const useEditorStore = create<EditorState & EditorActions>()(
     for (const id of selectedIds) {
       const obj = slide.objects.find((o) => o.id === id);
       if (!obj) continue;
-      const newId = uuidv4();
-      newIds.push(newId);
-      if (obj.type === 'line' || obj.type === 'arrow') {
-        newObjects.push({
-          ...obj,
-          id: newId,
-          points: obj.points.map((p, i) => p + (i % 2 === 0 ? 20 : 20)),
-        } as CanvasObject);
-      } else {
-        newObjects.push({ ...obj, id: newId, x: obj.x + 20, y: obj.y + 20 } as CanvasObject);
-      }
+      const clone = cloneObject(obj, 20, 20);
+      newObjects.push(clone);
+      newIds.push(clone.id);
     }
     set({
       slides: slides.map((s) =>
         s.id === activeSlideId ? { ...s, objects: [...s.objects, ...newObjects] } : s
       ),
       selectedIds: newIds,
+    });
+  },
+
+  groupSelected: () => {
+    const { slides, activeSlideId, selectedIds } = get();
+    if (!activeSlideId || selectedIds.length < 2) return;
+    const slide = slides.find((s) => s.id === activeSlideId);
+    if (!slide) return;
+    const selected = slide.objects.filter((o) => selectedIds.includes(o.id));
+    if (selected.length < 2 || selected.some((o) => o.type === 'group')) return;
+
+    const bounds = selected.map(getBounds);
+    const minX = Math.min(...bounds.map((b) => b.minX));
+    const minY = Math.min(...bounds.map((b) => b.minY));
+    const maxX = Math.max(...bounds.map((b) => b.maxX));
+    const maxY = Math.max(...bounds.map((b) => b.maxY));
+
+    const children: CanvasObject[] = selected.map((o) => {
+      if (o.type === 'line' || o.type === 'arrow') {
+        return {
+          ...o,
+          points: (o.points as number[]).map((p, i) => p - (i % 2 === 0 ? minX : minY)),
+        } as CanvasObject;
+      }
+      return { ...o, x: o.x - minX, y: o.y - minY } as CanvasObject;
+    });
+
+    const group: CanvasObject = {
+      id: uuidv4(),
+      type: 'group',
+      x: minX,
+      y: minY,
+      width: maxX - minX,
+      height: maxY - minY,
+      draggable: true,
+      children,
+    };
+
+    set({
+      slides: slides.map((s) =>
+        s.id === activeSlideId
+          ? { ...s, objects: [...s.objects.filter((o) => !selectedIds.includes(o.id)), group] }
+          : s
+      ),
+      selectedIds: [group.id],
+    });
+  },
+
+  ungroupSelected: () => {
+    const { slides, activeSlideId, selectedIds } = get();
+    if (!activeSlideId || selectedIds.length === 0) return;
+    const slide = slides.find((s) => s.id === activeSlideId);
+    if (!slide) return;
+
+    const groupsToUngroup: GroupObject[] = [];
+    for (const id of selectedIds) {
+      const obj = slide.objects.find((o) => o.id === id);
+      if (obj && obj.type === 'group') groupsToUngroup.push(obj);
+    }
+    if (groupsToUngroup.length === 0) return;
+
+    const flattened: CanvasObject[] = [];
+    for (const group of groupsToUngroup) {
+      for (const child of group.children) {
+        if (child.type === 'line' || child.type === 'arrow') {
+          flattened.push({
+            ...child,
+            points: (child.points as number[]).map((p, i) => p + (i % 2 === 0 ? group.x : group.y)),
+          } as CanvasObject);
+        } else {
+          flattened.push({
+            ...child,
+            x: child.x + group.x,
+            y: child.y + group.y,
+          } as CanvasObject);
+        }
+      }
+    }
+
+    const groupIds = new Set(groupsToUngroup.map((g) => g.id));
+    const nextSelected = selectedIds.flatMap((id) => {
+      const obj = slide.objects.find((o) => o.id === id);
+      if (obj && obj.type === 'group' && groupIds.has(obj.id)) {
+        return obj.children.map((c) => c.id);
+      }
+      return id;
+    });
+
+    set({
+      slides: slides.map((s) =>
+        s.id === activeSlideId
+          ? { ...s, objects: [...s.objects.filter((o) => !groupIds.has(o.id)), ...flattened] }
+          : s
+      ),
+      selectedIds: nextSelected,
     });
   },
 

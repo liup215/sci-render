@@ -16,17 +16,18 @@
 - "Reset session" button clears all slides and objects from state and localStorage.
 - Arrow drawing tool added with toolbar button, `A` shortcut, Konva Arrow rendering, and persistence support.
 - Image upload object added: toolbar Image button loads a local image as a base64 object, scaled to max 200px, draggable, transformable, and persisted.
+- Group / Ungroup objects: toolbar buttons, `Ctrl+G` / `Ctrl+Shift+G` shortcuts, recursive Konva Group rendering, drag/snap/duplicate/delete/persistence support.
 
 ## In Progress
-- Deciding next feature: local persistence vs. shape-library expansion.
+- Choosing the next feature slice (icon library, layers/z-index, undo/redo, or UI polish).
 
 ## What's Left
-- Local persistence (localStorage/IndexedDB) so work survives reloads.
 - Rulers UI (optional).
 - Icon/template library (post-MVP).
+- Layers / z-index panel (post-MVP).
+- Undo / redo (post-MVP).
 - User gallery/auth (post-MVP).
 - Backend persistence (post-MVP).
 
 ## Known Issues
 - None critical.
-- Ruler UI and image objects are stubbed in state/types but not yet implemented.
