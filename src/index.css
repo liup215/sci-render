@@ -471,3 +471,26 @@ input[type='color'] {
   text-align: center;
 }
 
+.text-style-row {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.text-style-row button {
+  flex: 1;
+  padding: 4px 6px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.text-style-row button.active {
+  background: #3b82f6;
+  color: #fff;
+  border-color: #3b82f6;
+}
+

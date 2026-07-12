@@ -1,9 +1,7 @@
 # Active Context
 
 ## Current Focus
-Implemented rulers UI. Added a `Rulers` component that renders horizontal and vertical canvas-backed rulers around the stage, with major/minor ticks and labels that update with zoom and pan. Added a toolbar "Rulers" toggle button and integrated rulers into the canvas workspace grid layout.
-
-Also fixed the grid rendering: the previous implementation used one Konva `Line` with a continuous point list, causing diagonal connector segments between grid lines. Grid is now rendered as separate vertical and horizontal `Line` elements.
+Implemented text editing enhancements. Added an inline `TextEditor` overlay that appears on double-clicking a text object, supporting direct text editing with Enter to commit and Escape to cancel. Extended `TextObject` with `fontFamily`, `fontStyle`, and `align`. Added text formatting controls to the Properties panel (font family, font size, bold, italic, alignment).
 
 ## Decisions Made
 - Tech stack: React + TypeScript + Vite + react-konva + Zustand.
@@ -16,9 +14,10 @@ Also fixed the grid rendering: the previous implementation used one Konva `Line`
 - `persist` partialize excludes `past`/`future` so history is reset on reload.
 - Rulers are drawn on HTML `<canvas>` overlays using a 20px grid layout; they respond to `zoom` and `stagePos` from the store.
 - Grid lines are rendered as independent `Line` nodes to avoid unintended connecting strokes.
+- Inline text editing uses an HTML `<textarea>` absolutely positioned with the same transform (position, scale, rotation) as the Konva Text node; edits commit via `updateObject`.
 
 ## Next Steps
-1. Choose the next MVP feature (text editing improvements, export options, or UI polish).
+1. Choose the next MVP feature (export options, UI polish, or advanced drawing tools).
 2. Continue incremental implementation with build + browser verification.
 3. Commit and push after each feature slice.
 

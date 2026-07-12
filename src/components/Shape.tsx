@@ -42,6 +42,7 @@ export function Shape({ object, isSelected, interactive = true }: ShapeProps) {
   );
 
   const startPosRef = useRef({ x: object.x, y: object.y });
+  const startEditingText = useEditorStore((s) => s.startEditingText);
 
   const handleClick = (e: KonvaEventObject<MouseEvent>) => {
     if (!interactive) return;
@@ -58,10 +59,7 @@ export function Shape({ object, isSelected, interactive = true }: ShapeProps) {
     if (!interactive) return;
     e.cancelBubble = true;
     if (object.type === 'text') {
-      const next = window.prompt('Edit text', object.text);
-      if (next !== null) {
-        updateObject(object.id, { text: next });
-      }
+      startEditingText(object.id);
     }
   };
 
@@ -169,6 +167,9 @@ export function Shape({ object, isSelected, interactive = true }: ShapeProps) {
           text={object.text}
           fontSize={object.fontSize}
           fill={object.fill}
+          fontFamily={object.fontFamily ?? 'Arial'}
+          fontStyle={object.fontStyle ?? 'normal'}
+          align={object.align ?? 'left'}
           width={object.width}
           rotation={object.rotation ?? 0}
           draggable={draggable}

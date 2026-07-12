@@ -21,9 +21,10 @@
 - Layers / z-index panel: right-side tabbed panel lists objects top-to-bottom with selection and ordering buttons (Top/Up/Down/Bottom). Added `]`/`[` and `Ctrl+]`/`Ctrl+[` keyboard shortcuts.
 - Undo / redo: store-level history stacks with pre-mutation snapshots; toolbar buttons and `Ctrl+Z` / `Ctrl+Y` / `Ctrl+Shift+Z` shortcuts; verified add/update undo/redo in browser.
 - Rulers UI: toolbar "Rulers" toggle shows/hides horizontal and vertical canvas rulers around the stage; ticks and labels scale with zoom and pan.
+- Text editing enhancement: inline `<textarea>` editor on double-click; `TextObject` now supports `fontFamily`, `fontStyle`, and `align`; Properties panel adds font family/size, bold/italic, and alignment controls.
 
 ## In Progress
-- Deciding the next MVP feature (text editing improvements, export options, or UI polish).
+- Deciding the next MVP feature (export options, UI polish, or advanced drawing tools).
 
 ## What's Left
 - User gallery/auth (post-MVP).

@@ -17,6 +17,7 @@ export interface EditorState {
   rulersVisible: boolean;
   snapEnabled: boolean;
   guides: SnapResult['guides'];
+  editingTextId: string | null;
   past: Omit<EditorState, 'past' | 'future'>[];
   future: Omit<EditorState, 'past' | 'future'>[];
 }
@@ -53,6 +54,8 @@ interface EditorActions {
   moveForward: () => void;
   moveBackward: () => void;
   setGuides: (guides: SnapResult['guides']) => void;
+  startEditingText: (id: string) => void;
+  stopEditingText: () => void;
   resetSession: () => void;
 }
 
@@ -184,6 +187,7 @@ const defaultState: EditorState = {
   rulersVisible: false,
   snapEnabled: true,
   guides: [],
+  editingTextId: null,
   past: [],
   future: [],
 };
@@ -550,6 +554,9 @@ export const useEditorStore = create<EditorState & EditorActions>()(
 
   setGuides: (guides) => set({ guides }),
 
+  startEditingText: (id) => set({ editingTextId: id }),
+  stopEditingText: () => set({ editingTextId: null }),
+
   resetSession: () => {
     const slide = createBlankSlide();
     set({
@@ -565,6 +572,7 @@ export const useEditorStore = create<EditorState & EditorActions>()(
       rulersVisible: false,
       snapEnabled: true,
       guides: [],
+      editingTextId: null,
       past: [],
       future: [],
     });

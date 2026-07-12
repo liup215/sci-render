@@ -161,6 +161,54 @@ export function PropertiesPanel() {
                       }
                     />
                   </label>
+                  <label>
+                    Font Family
+                    <input
+                      type="text"
+                      value={selected.fontFamily ?? 'Arial'}
+                      onChange={(e) =>
+                        updateObject(selected.id, { fontFamily: e.target.value })
+                      }
+                    />
+                  </label>
+                  <div className="text-style-row">
+                    <button
+                      className={selected.fontStyle?.includes('bold') ? 'active' : ''}
+                      onClick={() => {
+                        const style = selected.fontStyle ?? 'normal';
+                        const next = style.includes('bold')
+                          ? style.replace('bold', '').trim() || 'normal'
+                          : (style === 'normal' ? 'bold' : `${style} bold`);
+                        updateObject(selected.id, { fontStyle: next });
+                      }}
+                      title="Bold"
+                    >
+                      B
+                    </button>
+                    <button
+                      className={selected.fontStyle?.includes('italic') ? 'active' : ''}
+                      onClick={() => {
+                        const style = selected.fontStyle ?? 'normal';
+                        const next = style.includes('italic')
+                          ? style.replace('italic', '').trim() || 'normal'
+                          : (style === 'normal' ? 'italic' : `${style} italic`);
+                        updateObject(selected.id, { fontStyle: next });
+                      }}
+                      title="Italic"
+                    >
+                      I
+                    </button>
+                    {(['left', 'center', 'right'] as const).map((a) => (
+                      <button
+                        key={a}
+                        className={selected.align === a ? 'active' : ''}
+                        onClick={() => updateObject(selected.id, { align: a })}
+                        title={`Align ${a}`}
+                      >
+                        {a[0].toUpperCase()}
+                      </button>
+                    ))}
+                  </div>
                 </>
               )}
             </>

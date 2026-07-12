@@ -5,6 +5,7 @@ import Konva from 'konva';
 import { v4 as uuidv4 } from 'uuid';
 import { useEditorStore } from '../store/useEditorStore';
 import { Shape } from './Shape';
+import { TextEditor } from './TextEditor';
 import type { CanvasObject, RectObject, CircleObject, TextObject, LineObject, ArrowObject } from '../types';
 
 const GRID_SIZE = 20;
@@ -503,6 +504,7 @@ export function CanvasStage() {
           />
         </Layer>
       </Stage>
+      <TextEditor stageRef={stageRef} />
     </div>
   );
 }

@@ -36,6 +36,9 @@ export interface TextObject extends BaseObject {
   text: string;
   fontSize: number;
   fill: string;
+  fontFamily?: string;
+  fontStyle?: string;
+  align?: 'left' | 'center' | 'right';
   width?: number;
 }
 
