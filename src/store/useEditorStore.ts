@@ -74,6 +74,9 @@ function cloneObject(obj: CanvasObject, dx: number, dy: number): CanvasObject {
       children: obj.children.map((c) => cloneObject(c, 0, 0)),
     } as CanvasObject;
   }
+  if (obj.type === 'path') {
+    return { ...obj, id, x: obj.x + dx, y: obj.y + dy } as CanvasObject;
+  }
   return { ...obj, id, x: obj.x + dx, y: obj.y + dy } as CanvasObject;
 }
 
@@ -134,6 +137,9 @@ function transformObject(
 
   if (obj.type === 'rect' || obj.type === 'image') {
     return { ...obj, x: absX, y: absY, width: obj.width * scaleX, height: obj.height * scaleY, rotation: childRotation };
+  }
+  if (obj.type === 'path') {
+    return { ...obj, x: absX, y: absY, width: obj.width * scaleX, height: obj.height * scaleY, scaleX: 1, scaleY: 1, rotation: childRotation };
   }
   if (obj.type === 'circle') {
     return { ...obj, x: absX, y: absY, radius: obj.radius * Math.max(scaleX, scaleY), rotation: childRotation };

@@ -349,6 +349,14 @@ export function CanvasStage() {
           height: Math.max(5, obj.height * scaleY),
           rotation,
         });
+      } else if (obj.type === 'path') {
+        updateObject(id, {
+          x,
+          y,
+          width: Math.max(5, obj.width * scaleX),
+          height: Math.max(5, obj.height * scaleY),
+          rotation,
+        });
       }
 
       node.scaleX(1);

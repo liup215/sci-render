@@ -1,13 +1,15 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { Toolbar } from './components/Toolbar';
 import { SlidePanel } from './components/SlidePanel';
 import { PropertiesPanel } from './components/PropertiesPanel';
 import { CanvasStage } from './components/CanvasStage';
+import { IconLibrary } from './components/IconLibrary';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import './index.css';
 
 function App() {
   useKeyboardShortcuts();
+  const [iconLibraryOpen, setIconLibraryOpen] = useState(false);
   const stageContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -25,11 +27,12 @@ function App() {
       <header className="app-header">
         <div className="app-brand">SciRender</div>
       </header>
-      <Toolbar />
+      <Toolbar onOpenIconLibrary={() => setIconLibraryOpen(true)} />
       <div className="app-body">
         <SlidePanel />
         <div ref={stageContainerRef} className="canvas-area">
           <CanvasStage />
+          {iconLibraryOpen && <IconLibrary onClose={() => setIconLibraryOpen(false)} />}
         </div>
         <PropertiesPanel />
       </div>

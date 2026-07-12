@@ -13,7 +13,11 @@ const TOOLS: { id: Tool; label: string }[] = [
   { id: 'text', label: 'Text (T)' },
 ];
 
-export function Toolbar() {
+interface ToolbarProps {
+  onOpenIconLibrary: () => void;
+}
+
+export function Toolbar({ onOpenIconLibrary }: ToolbarProps) {
   const {
     tool,
     setTool,
@@ -133,6 +137,7 @@ export function Toolbar() {
 
       <div className="toolbar-group">
         <button onClick={() => fileInputRef.current?.click()}>Image</button>
+        <button onClick={onOpenIconLibrary}>Icons</button>
         <button onClick={handleExport}>Export PNG</button>
         <button onClick={() => deleteObjects()} disabled={selectedIds.length === 0}>
           Delete

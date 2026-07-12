@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from 'react';
-import { Rect, Circle, Text, Line, Arrow, Image, Group } from 'react-konva';
+import { Rect, Circle, Text, Line, Arrow, Image, Group, Path } from 'react-konva';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import type { CanvasObject } from '../types';
 import { useEditorStore } from '../store/useEditorStore';
@@ -239,6 +239,30 @@ export function Shape({ object, isSelected, interactive = true }: ShapeProps) {
           onDragStart={handleDragStart}
           onDragMove={handleDragMove}
           onDragEnd={handleDragEnd}
+        />
+      );
+    case 'path':
+      return (
+        <Path
+          id={object.id}
+          x={object.x}
+          y={object.y}
+          width={object.width}
+          height={object.height}
+          data={object.data}
+          fill={object.fill}
+          stroke={object.stroke}
+          strokeWidth={object.strokeWidth}
+          rotation={object.rotation ?? 0}
+          scaleX={object.scaleX ?? 1}
+          scaleY={object.scaleY ?? 1}
+          draggable={draggable}
+          onClick={handleClick}
+          onDblClick={handleDblClick}
+          onDragStart={handleDragStart}
+          onDragMove={handleDragMove}
+          onDragEnd={handleDragEnd}
+          hitStrokeWidth={Math.max(object.strokeWidth, 8)}
         />
       );
     case 'group':

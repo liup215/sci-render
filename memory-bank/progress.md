@@ -19,11 +19,10 @@
 - Group / Ungroup objects: toolbar buttons, `Ctrl+G` / `Ctrl+Shift+G` shortcuts, recursive Konva Group rendering, drag/snap/duplicate/delete/persistence support. Groups now show a Transformer selection box and can be scaled/rotated; group transforms are baked into children on ungroup.
 
 ## In Progress
-- Choosing the next feature slice (icon library, layers/z-index, undo/redo, or UI polish).
+- Deciding the next MVP feature (layers/z-index, undo/redo, or UI polish).
 
 ## What's Left
 - Rulers UI (optional).
-- Icon/template library (post-MVP).
 - Layers / z-index panel (post-MVP).
 - Undo / redo (post-MVP).
 - User gallery/auth (post-MVP).
