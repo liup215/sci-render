@@ -31,3 +31,6 @@
 
 ## Known Issues
 - None critical.
+
+## Recent Fixes
+- Grid rendering: previous single Konva `Line` with concatenated points produced diagonal connecting lines; now renders separate vertical and horizontal `Line` nodes for a regular grid.

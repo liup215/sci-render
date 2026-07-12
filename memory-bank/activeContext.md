@@ -3,6 +3,8 @@
 ## Current Focus
 Implemented rulers UI. Added a `Rulers` component that renders horizontal and vertical canvas-backed rulers around the stage, with major/minor ticks and labels that update with zoom and pan. Added a toolbar "Rulers" toggle button and integrated rulers into the canvas workspace grid layout.
 
+Also fixed the grid rendering: the previous implementation used one Konva `Line` with a continuous point list, causing diagonal connector segments between grid lines. Grid is now rendered as separate vertical and horizontal `Line` elements.
+
 ## Decisions Made
 - Tech stack: React + TypeScript + Vite + react-konva + Zustand.
 - Repository root: `C:\Users\22569\Documents\20-Projects\sci-render`.
@@ -13,6 +15,7 @@ Implemented rulers UI. Added a `Rulers` component that renders horizontal and ve
 - Undo/redo snapshots exclude the history stacks and transient guides.
 - `persist` partialize excludes `past`/`future` so history is reset on reload.
 - Rulers are drawn on HTML `<canvas>` overlays using a 20px grid layout; they respond to `zoom` and `stagePos` from the store.
+- Grid lines are rendered as independent `Line` nodes to avoid unintended connecting strokes.
 
 ## Next Steps
 1. Choose the next MVP feature (text editing improvements, export options, or UI polish).

@@ -365,18 +365,23 @@ export function CanvasStage() {
   };
 
   // Grid lines within visible area plus padding
-  const gridLines: number[] = [];
+  let gridStartX = 0;
+  let gridEndX = 0;
+  let gridStartY = 0;
+  let gridEndY = 0;
+  const gridXs: number[] = [];
+  const gridYs: number[] = [];
   if (gridVisible) {
-    const startX = Math.floor((-stagePos.x / zoom) / GRID_SIZE) * GRID_SIZE;
-    const endX = startX + (size.width / zoom) + GRID_SIZE * 2;
-    const startY = Math.floor((-stagePos.y / zoom) / GRID_SIZE) * GRID_SIZE;
-    const endY = startY + (size.height / zoom) + GRID_SIZE * 2;
+    gridStartX = Math.floor((-stagePos.x / zoom) / GRID_SIZE) * GRID_SIZE;
+    gridEndX = gridStartX + (size.width / zoom) + GRID_SIZE * 2;
+    gridStartY = Math.floor((-stagePos.y / zoom) / GRID_SIZE) * GRID_SIZE;
+    gridEndY = gridStartY + (size.height / zoom) + GRID_SIZE * 2;
 
-    for (let x = startX; x <= endX; x += GRID_SIZE) {
-      gridLines.push(x, startY, x, endY);
+    for (let x = gridStartX; x <= gridEndX; x += GRID_SIZE) {
+      gridXs.push(x);
     }
-    for (let y = startY; y <= endY; y += GRID_SIZE) {
-      gridLines.push(startX, y, endX, y);
+    for (let y = gridStartY; y <= gridEndY; y += GRID_SIZE) {
+      gridYs.push(y);
     }
   }
 
@@ -428,12 +433,26 @@ export function CanvasStage() {
             listening={false}
           />
           {gridVisible && (
-            <Line
-              points={gridLines}
-              stroke="#e4e4e7"
-              strokeWidth={1 / zoom}
-              listening={false}
-            />
+            <>
+              {gridXs.map((x) => (
+                <Line
+                  key={`gv-${x}`}
+                  points={[x, gridStartY, x, gridEndY]}
+                  stroke="#e4e4e7"
+                  strokeWidth={1 / zoom}
+                  listening={false}
+                />
+              ))}
+              {gridYs.map((y) => (
+                <Line
+                  key={`gh-${y}`}
+                  points={[gridStartX, y, gridEndX, y]}
+                  stroke="#e4e4e7"
+                  strokeWidth={1 / zoom}
+                  listening={false}
+                />
+              ))}
+            </>
           )}
           {selectionRect && (
             <Rect
