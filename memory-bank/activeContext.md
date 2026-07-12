@@ -3,12 +3,13 @@
 ## Current Focus
 The main application UI has been reorganized into a BioRender-style layout: a single dark top header that combines the brand and a grouped toolbar, a left sidebar with tabbed "Slides" and "Icons" panels, a central canvas area, and the existing right-side Properties/Layers panel.
 
-Key layout changes:
-- `App.tsx` renders `<Toolbar />` inside the header and `<LeftPanel />` in the body.
-- `LeftPanel` now hosts a vertical `<Toolbox />` at the top for drawing tools, followed by tabbed `SlidePanel` and `IconLibraryContent`.
-- `Toolbox` is a new vertical drawing-tool strip containing Select, Rectangle, Circle, Line, Arrow, Text, and Pen.
-- `IconLibraryContent` is a reusable icon grid extracted from the old floating `IconLibrary` panel; the old `IconLibrary` still exists as a floating wrapper for any future modal use.
-- `Toolbar` in the header has been trimmed to: edit actions (undo/redo/group/ungroup/delete), alignment, ordering (front/up/down/back), view toggles (grid/rulers/snap), insert/export (image/PNG/SVG), and zoom controls.
+Key layout changes (BioRender-style v2):
+- `App.tsx` renders a minimal `<Toolbar />` inside the header and `<LeftPanel />` in the body.
+- Top header now only holds global actions: brand, undo/redo/delete, view toggles (grid/rulers/snap), insert/export (image/PNG/SVG), and zoom.
+- `LeftPanel` is a two-column sidebar: a narrow vertical `<Toolbox />` on the left (Select/Rect/Circle/Line/Arrow/Text/Pen) and a large searchable `IconLibraryContent` on the right.
+- `IconLibraryContent` now includes a search input that filters presets by name within the active category, plus an empty state.
+- Slides have moved out of the left sidebar into a new "Slides" tab in the right-side `PropertiesPanel`, so the right panel now has Properties / Layers / Slides tabs.
+- Align and ordering buttons were removed from the top header to reduce clutter; ordering is still available in the Layers tab, and alignment can be reintroduced later via a context menu or dedicated properties section.
 
 Verification confirmed in a production build (`npm run build && npm run preview`) to avoid the Vite dev HMR store-duplication issue.
 

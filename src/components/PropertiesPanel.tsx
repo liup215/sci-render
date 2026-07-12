@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useEditorStore } from '../store/useEditorStore';
+import { SlidePanel } from './SlidePanel';
 import type { CanvasObject } from '../types';
 
-type Tab = 'properties' | 'layers';
+type Tab = 'properties' | 'layers' | 'slides';
 
 function getObjectLabel(obj: CanvasObject) {
   switch (obj.type) {
@@ -66,6 +67,12 @@ export function PropertiesPanel() {
           onClick={() => setTab('layers')}
         >
           Layers
+        </button>
+        <button
+          className={tab === 'slides' ? 'active' : ''}
+          onClick={() => setTab('slides')}
+        >
+          Slides
         </button>
       </div>
 
@@ -253,6 +260,8 @@ export function PropertiesPanel() {
           </div>
         </>
       )}
+
+      {tab === 'slides' && <SlidePanel />}
     </div>
   );
 }

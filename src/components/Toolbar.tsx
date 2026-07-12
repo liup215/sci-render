@@ -2,7 +2,6 @@ import { useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useEditorStore } from '../store/useEditorStore';
 import type { CanvasObject } from '../types';
-import type { AlignMode } from '../utils/snap';
 
 export function Toolbar() {
   const {
@@ -15,31 +14,20 @@ export function Toolbar() {
     snapEnabled,
     toggleSnap,
     selectedIds,
-    alignSelected,
     deleteObjects,
     addObject,
-    groupSelected,
-    ungroupSelected,
     canvasSize,
     undo,
     redo,
     past,
     future,
     exportSvg,
-    bringToFront,
-    sendToBack,
-    moveForward,
-    moveBackward,
   } = useEditorStore();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleExport = () => {
     window.dispatchEvent(new CustomEvent('sci-render:export'));
-  };
-
-  const handleAlign = (align: AlignMode) => {
-    alignSelected(align);
   };
 
   const handleImageUpload = async (file: File) => {
@@ -83,42 +71,8 @@ export function Toolbar() {
         <button onClick={redo} disabled={future.length === 0} title="Redo (Ctrl+Y / Ctrl+Shift+Z)">
           Redo
         </button>
-        <button onClick={groupSelected} disabled={selectedIds.length < 2} title="Group (Ctrl+G)">
-          Group
-        </button>
-        <button onClick={ungroupSelected} disabled={selectedIds.length === 0} title="Ungroup (Ctrl+Shift+G)">
-          Ungroup
-        </button>
         <button onClick={() => deleteObjects()} disabled={selectedIds.length === 0} title="Delete">
           Delete
-        </button>
-      </div>
-
-      <div className="toolbar-group">
-        {(['left', 'center', 'right', 'top', 'middle', 'bottom'] as AlignMode[]).map((a) => (
-          <button
-            key={a}
-            onClick={() => handleAlign(a)}
-            disabled={selectedIds.length < 2}
-            title={`Align ${a}`}
-          >
-            {a[0].toUpperCase() + a.slice(1)}
-          </button>
-        ))}
-      </div>
-
-      <div className="toolbar-group">
-        <button onClick={bringToFront} disabled={selectedIds.length === 0} title="Bring to front">
-          Front
-        </button>
-        <button onClick={moveForward} disabled={selectedIds.length === 0} title="Move forward">
-          Up
-        </button>
-        <button onClick={moveBackward} disabled={selectedIds.length === 0} title="Move backward">
-          Down
-        </button>
-        <button onClick={sendToBack} disabled={selectedIds.length === 0} title="Send to back">
-          Back
         </button>
       </div>
 

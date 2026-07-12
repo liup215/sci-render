@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { iconPresets, ICON_CATEGORIES } from '../data/iconPresets';
 import { v4 as uuidv4 } from 'uuid';
 import type { PathObject } from '../types';
@@ -6,6 +6,7 @@ import { useEditorStore } from '../store/useEditorStore';
 
 export function IconLibraryContent() {
   const [activeCategory, setActiveCategory] = useState<string>(ICON_CATEGORIES[0]);
+  const [query, setQuery] = useState('');
   const addObject = useEditorStore((s) => s.addObject);
   const canvasSize = useEditorStore((s) => s.canvasSize);
 
@@ -27,10 +28,25 @@ export function IconLibraryContent() {
     addObject(obj);
   };
 
-  const filtered = iconPresets.filter((p) => p.category === activeCategory);
+  const filtered = useMemo(() => {
+    const term = query.trim().toLowerCase();
+    return iconPresets.filter((p) => {
+      const matchesCategory = p.category === activeCategory;
+      const matchesQuery = term === '' || p.name.toLowerCase().includes(term);
+      return matchesCategory && matchesQuery;
+    });
+  }, [activeCategory, query]);
 
   return (
     <div className="icon-library-content">
+      <div className="icon-library-search">
+        <input
+          type="text"
+          placeholder="Search icons..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+      </div>
       <div className="icon-library-categories">
         {ICON_CATEGORIES.map((cat) => (
           <button
@@ -64,6 +80,9 @@ export function IconLibraryContent() {
             <span className="icon-library-name">{preset.name}</span>
           </button>
         ))}
+        {filtered.length === 0 && (
+          <div className="icon-library-empty">No icons found</div>
+        )}
       </div>
     </div>
   );
