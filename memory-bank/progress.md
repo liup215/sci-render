@@ -1,0 +1,27 @@
+# Progress
+
+## What Works
+- Vite React TS project scaffolded with Konva, Zustand, and utilities.
+- Canvas stage with pan/zoom, grid background, and responsive sizing.
+- Toolbar with select, rectangle, circle, line, and text tools.
+- Shape rendering, selection, multi-selection, and transform handles.
+- Drag snapping with alignment guides and toolbar alignment actions.
+- Multi-slide panel with add/delete/rename.
+- Export active slide to PNG.
+- Global keyboard shortcuts: V/R/C/L/T tools, Esc cancel, Ctrl+A select all, Ctrl+D duplicate, arrow-key nudge, Space pan, Delete remove.
+- Tool-specific mouse cursors (crosshair for drawing tools, grab/grabbing for pan).
+- Production build passes TypeScript and Vite bundling.
+
+## In Progress
+- Deciding next feature: local persistence vs. shape-library expansion.
+
+## What's Left
+- Local persistence (localStorage/IndexedDB) so work survives reloads.
+- Rulers UI (optional).
+- Icon/template library (post-MVP).
+- User gallery/auth (post-MVP).
+- Backend persistence (post-MVP).
+
+## Known Issues
+- None critical.
+- Ruler UI and image objects are stubbed in state/types but not yet implemented.
