@@ -1,7 +1,7 @@
 # Active Context
 
 ## Current Focus
-Implemented text editing enhancements. Added an inline `TextEditor` overlay that appears on double-clicking a text object, supporting direct text editing with Enter to commit and Escape to cancel. Extended `TextObject` with `fontFamily`, `fontStyle`, and `align`. Added text formatting controls to the Properties panel (font family, font size, bold, italic, alignment).
+Fixed text creation and inline editing activation. Text tool now creates a text object on mouseup and immediately opens the inline editor. Select-tool double-click on a text object triggers inline editing via Konva `dblclick` plus a 300ms click-time fallback. Properties panel text editing remains available as an alternative.
 
 ## Decisions Made
 - Tech stack: React + TypeScript + Vite + react-konva + Zustand.
@@ -15,6 +15,7 @@ Implemented text editing enhancements. Added an inline `TextEditor` overlay that
 - Rulers are drawn on HTML `<canvas>` overlays using a 20px grid layout; they respond to `zoom` and `stagePos` from the store.
 - Grid lines are rendered as independent `Line` nodes to avoid unintended connecting strokes.
 - Inline text editing uses an HTML `<textarea>` absolutely positioned with the same transform (position, scale, rotation) as the Konva Text node; edits commit via `updateObject`.
+- Text tool creates the object on mouseup and immediately enters edit mode; select-tool double-click also enters edit mode.
 
 ## Next Steps
 1. Choose the next MVP feature (export options, UI polish, or advanced drawing tools).

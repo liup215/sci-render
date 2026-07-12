@@ -31,7 +31,8 @@
 - Backend persistence (post-MVP).
 
 ## Known Issues
-- None critical.
+- Inline text double-click activation relies on Konva's `dblclick` event and a 300ms custom double-click fallback in `Shape.tsx`; automated synthetic events don't trigger it, but manual user double-clicks should.
 
 ## Recent Fixes
 - Grid rendering: previous single Konva `Line` with concatenated points produced diagonal connecting lines; now renders separate vertical and horizontal `Line` nodes for a regular grid.
+- Text creation/edit flow: text tool now creates a text object on mouseup (instead of mousedown) and immediately enters inline editing; select tool double-click on a text object enters inline editing via both Konva `onDblClick` and a custom 300ms double-click detector.

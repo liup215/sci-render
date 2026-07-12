@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import type Konva from 'konva';
 import type { TextObject } from '../types';
 import { useEditorStore } from '../store/useEditorStore';
@@ -23,13 +23,13 @@ export function TextEditor({ stageRef }: TextEditorProps) {
 
   const getCurrentText = () => textareaRef.current?.value ?? text;
 
-  const object = (() => {
+  const object = React.useMemo(() => {
     if (!editingTextId || !activeSlideId) return null;
     const slide = slides.find((s) => s.id === activeSlideId);
     if (!slide) return null;
     const obj = slide.objects.find((o) => o.id === editingTextId);
     return obj?.type === 'text' ? (obj as TextObject) : null;
-  })();
+  }, [editingTextId, activeSlideId, slides]);
 
   useEffect(() => {
     if (!object || !stageRef.current) {

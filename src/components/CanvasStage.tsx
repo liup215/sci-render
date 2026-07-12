@@ -33,6 +33,7 @@ export function CanvasStage() {
     setZoom,
     setStagePos,
     deleteObjects,
+    startEditingText,
   } = useEditorStore();
 
   const activeSlide = slides.find((s) => s.id === activeSlideId);
@@ -191,17 +192,9 @@ export function CanvasStage() {
 
     // Start creating a shape
     if (tool === 'text') {
-      const textObj: TextObject = {
-        id: uuidv4(),
-        type: 'text',
-        x: pos.x,
-        y: pos.y,
-        text: 'Double click to edit',
-        fontSize: 20,
-        fill: '#000000',
-        draggable: true,
-      };
-      addObject(textObj);
+      if (clickedOnEmpty) {
+        setDrawingRef({ start: pos, current: pos, tempId: 'text-create' });
+      }
       return;
     }
 
@@ -278,7 +271,23 @@ export function CanvasStage() {
       return;
     }
 
-    if (tool === 'text') return;
+    if (tool === 'text') {
+      if (tempId === 'text-create') {
+        const textObj: TextObject = {
+          id: uuidv4(),
+          type: 'text',
+          x: start.x,
+          y: start.y,
+          text: 'Double click to edit',
+          fontSize: 20,
+          fill: '#000000',
+          draggable: true,
+        };
+        addObject(textObj);
+        setTimeout(() => startEditingText(textObj.id), 0);
+      }
+      return;
+    }
 
     const shape = buildShapeFromDraw(tool, start, current, tempId ?? uuidv4());
     if (isShapeVisible(shape)) {

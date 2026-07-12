@@ -43,11 +43,22 @@ export function Shape({ object, isSelected, interactive = true }: ShapeProps) {
 
   const startPosRef = useRef({ x: object.x, y: object.y });
   const startEditingText = useEditorStore((s) => s.startEditingText);
+  const lastClickRef = useRef(0);
 
   const handleClick = (e: KonvaEventObject<MouseEvent>) => {
     if (!interactive) return;
     e.cancelBubble = true;
     if (tool !== 'select') return;
+
+    const now = Date.now();
+    const isDoubleClick = now - lastClickRef.current < 300;
+    lastClickRef.current = now;
+
+    if (isDoubleClick && object.type === 'text') {
+      startEditingText(object.id);
+      return;
+    }
+
     if (e.evt.shiftKey) {
       toggleSelectedId(object.id);
     } else {
