@@ -11,6 +11,7 @@ const TOOLS: { id: Tool; label: string }[] = [
   { id: 'line', label: 'Line (L)' },
   { id: 'arrow', label: 'Arrow (A)' },
   { id: 'text', label: 'Text (T)' },
+  { id: 'pen', label: 'Pen (P)' },
 ];
 
 interface ToolbarProps {

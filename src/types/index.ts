@@ -1,4 +1,4 @@
-export type Tool = 'select' | 'rect' | 'circle' | 'text' | 'line' | 'arrow';
+export type Tool = 'select' | 'rect' | 'circle' | 'text' | 'line' | 'arrow' | 'pen';
 
 export interface CanvasSize {
   width: number;

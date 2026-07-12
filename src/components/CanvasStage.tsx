@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useEditorStore } from '../store/useEditorStore';
 import { Shape } from './Shape';
 import { TextEditor } from './TextEditor';
-import type { CanvasObject, RectObject, CircleObject, TextObject, LineObject, ArrowObject } from '../types';
+import type { CanvasObject, RectObject, CircleObject, TextObject, LineObject, ArrowObject, PathObject, Tool } from '../types';
 
 const GRID_SIZE = 20;
 
@@ -44,6 +44,7 @@ export function CanvasStage() {
     start: { x: number; y: number };
     current: { x: number; y: number };
     tempId: string | null;
+    points?: { x: number; y: number }[];
   } | null>(null);
   const drawingRef = useRef(drawing);
   const setDrawingRef = useCallback(
@@ -198,6 +199,14 @@ export function CanvasStage() {
       return;
     }
 
+    if (tool === 'pen') {
+      const id = uuidv4();
+      const obj = buildPathFromPoints([pos], id);
+      addObject(obj);
+      setDrawingRef({ start: pos, current: pos, tempId: id, points: [pos] });
+      return;
+    }
+
     setDrawingRef({ start: pos, current: pos, tempId: uuidv4() });
   };
 
@@ -216,6 +225,18 @@ export function CanvasStage() {
     const d = drawingRef.current;
     if (d) {
       setDrawingRef({ ...d, current: pos });
+    }
+
+    if (tool === 'pen' && d?.tempId && d.points) {
+      const last = d.points[d.points.length - 1];
+      const minDist = 2;
+      const dist = Math.hypot(pos.x - last.x, pos.y - last.y);
+      if (dist >= minDist) {
+        const points = [...d.points, pos];
+        setDrawingRef({ ...d, current: pos, points });
+        updateObject(d.tempId, buildPathFromPoints(points, d.tempId));
+      }
+      return;
     }
 
     if (tool !== 'select' && tool !== 'text' && d?.tempId) {
@@ -285,6 +306,18 @@ export function CanvasStage() {
         };
         addObject(textObj);
         setTimeout(() => startEditingText(textObj.id), 0);
+      }
+      return;
+    }
+
+    if (tool === 'pen') {
+      if (tempId) {
+        const existing = objects.find((o) => o.id === tempId);
+        if (existing && isShapeVisible(existing)) {
+          setSelectedIds([tempId]);
+        } else {
+          deleteObjects([tempId]);
+        }
       }
       return;
     }
@@ -494,7 +527,7 @@ export function CanvasStage() {
           {objects.map((obj) => (
             <Shape key={obj.id} object={obj} isSelected={selectedIds.includes(obj.id)} />
           ))}
-          {drawing && drawing.tempId && tool !== 'select' && tool !== 'text' && (
+          {drawing && drawing.tempId && tool !== 'select' && tool !== 'text' && tool !== 'pen' && (
             <PreviewShape
               tool={tool}
               start={drawing.start}
@@ -519,7 +552,7 @@ export function CanvasStage() {
 }
 
 function buildShapeFromDraw(
-  tool: 'rect' | 'circle' | 'line' | 'arrow',
+  tool: Exclude<Tool, 'select' | 'text'>,
   start: { x: number; y: number },
   current: { x: number; y: number },
   id: string
@@ -584,6 +617,8 @@ function buildShapeFromDraw(
         fill: '#1f2937',
         draggable: true,
       } as ArrowObject;
+      default:
+        throw new Error(`Unsupported drawing tool: ${tool}`);
   }
 }
 
@@ -594,7 +629,42 @@ function isShapeVisible(obj: CanvasObject): boolean {
   }
   if (obj.type === 'circle') return obj.radius > 2;
   if (obj.type === 'rect') return obj.width > 5 && obj.height > 5;
+  if (obj.type === 'path') {
+    const p = obj.data;
+    if (!p || p.length < 4) return false;
+    // Require at least one line command (L or l) to avoid single-dot paths.
+    return /[Ll]/.test(p);
+  }
   return true;
+}
+
+function buildPathFromPoints(points: { x: number; y: number }[], id: string): PathObject {
+  const xs = points.map((p) => p.x);
+  const ys = points.map((p) => p.y);
+  const minX = Math.min(...xs);
+  const minY = Math.min(...ys);
+  const maxX = Math.max(...xs);
+  const maxY = Math.max(...ys);
+  const width = Math.max(1, maxX - minX);
+  const height = Math.max(1, maxY - minY);
+  const commands = points.map((p, i) => {
+    const x = (p.x - minX).toFixed(2);
+    const y = (p.y - minY).toFixed(2);
+    return i === 0 ? `M ${x} ${y}` : `L ${x} ${y}`;
+  });
+  return {
+    id,
+    type: 'path',
+    x: minX,
+    y: minY,
+    width,
+    height,
+    data: commands.join(' '),
+    fill: 'none',
+    stroke: '#1f2937',
+    strokeWidth: 3,
+    draggable: true,
+  };
 }
 
 function PreviewShape({
@@ -602,7 +672,7 @@ function PreviewShape({
   start,
   current,
 }: {
-  tool: 'rect' | 'circle' | 'line' | 'arrow';
+  tool: Exclude<Tool, 'select' | 'text'>;
   start: { x: number; y: number };
   current: { x: number; y: number };
 }) {

@@ -9,6 +9,7 @@ const TOOL_KEYS: Record<string, Tool> = {
   l: 'line',
   a: 'arrow',
   t: 'text',
+  p: 'pen',
 };
 
 export function useKeyboardShortcuts() {

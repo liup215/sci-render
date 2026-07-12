@@ -24,9 +24,10 @@
 - Text editing enhancement: inline `<textarea>` editor on double-click; `TextObject` now supports `fontFamily`, `fontStyle`, and `align`; Properties panel adds font family/size, bold/italic, and alignment controls.
 - Copy / paste: `Ctrl+C` copies selected objects to an in-memory clipboard, `Ctrl+V` pastes cloned objects offset by (20, 20) and selects the pasted set; supports groups and multiple selections.
 - SVG vector export: toolbar "Export SVG" button generates true SVG from active slide objects (rect, circle, text, line, arrow, image, path, group) with proper transforms, markers, and multi-line text; downloads as `<slide-name>.svg`.
+- Freehand pen tool: toolbar "Pen (P)" button and `P` shortcut; mouse drag creates a `PathObject` with normalized SVG path data; supports selection, transform, layers, grouping, undo/redo, persistence, and SVG export.
 
 ## In Progress
-- Deciding the next MVP feature (advanced drawing tools, additional export formats, or UI polish).
+- Deciding the next MVP feature (e.g., bezier curves / custom shapes, PDF export, color picker popover, or project JSON import/export).
 
 ## What's Left
 - User gallery/auth (post-MVP).
@@ -34,6 +35,7 @@
 
 ## Known Issues
 - Inline text double-click activation relies on Konva's `dblclick` event and a 300ms custom double-click fallback in `Shape.tsx`; automated synthetic events don't trigger it, but manual user double-clicks should.
+- Vite dev HMR can leave multiple Zustand store instances in memory, so automated console probes or dynamic imports of the store module may see stale/empty state even though the React UI uses the authoritative store instance. Use a production build/preview for reliable automated verification of store-dependent features.
 
 ## Recent Fixes
 - Grid rendering: previous single Konva `Line` with concatenated points produced diagonal connecting lines; now renders separate vertical and horizontal `Line` nodes for a regular grid.
