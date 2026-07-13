@@ -1,0 +1,38 @@
+[
+  {
+    "id": "lipid-bilayer",
+    "name": "Lipid Bilayer",
+    "category": "Membranes",
+    "subcategory": "Lipid Bilayers",
+    "data": "M 10 30 Q 20 20 30 30 T 50 30 T 70 30 T 90 30 M 10 70 Q 20 60 30 70 T 50 70 T 70 70 T 90 70 M 15 30 L 15 70 M 35 30 L 35 70 M 55 30 L 55 70 M 75 30 L 75 70 M 95 30 L 95 70",
+    "width": 100,
+    "height": 100,
+    "fill": "transparent",
+    "stroke": "#06b6d4",
+    "strokeWidth": 2
+  },
+  {
+    "id": "membrane-receptor",
+    "name": "Membrane Receptor",
+    "category": "Membranes",
+    "subcategory": "Receptors",
+    "data": "M 10 55 Q 20 45 30 55 T 50 55 T 70 55 T 90 55 M 50 55 L 50 25 C 50 15 60 10 70 15 C 80 20 75 35 65 35 L 60 35 M 50 55 L 50 75 C 50 85 40 90 30 85 C 20 80 25 65 35 65 L 40 65",
+    "width": 100,
+    "height": 100,
+    "fill": "#cffafe",
+    "stroke": "#0891b2",
+    "strokeWidth": 2
+  },
+  {
+    "id": "vesicle",
+    "name": "Vesicle",
+    "category": "Membranes",
+    "subcategory": "Vesicles",
+    "data": "M 50 20 C 72 20 88 35 88 55 C 88 75 72 90 50 90 C 28 90 12 75 12 55 C 12 35 28 20 50 20 Z M 50 20 C 50 35 50 65 50 90 M 25 35 C 35 40 45 38 55 35 M 25 75 C 35 70 45 72 55 75",
+    "width": 100,
+    "height": 100,
+    "fill": "#ecfeff",
+    "stroke": "#0e7490",
+    "strokeWidth": 2
+  }
+]

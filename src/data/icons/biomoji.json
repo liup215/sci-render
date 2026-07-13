@@ -1,0 +1,26 @@
+[
+  {
+    "id": "happy-cell",
+    "name": "Happy Cell",
+    "category": "Biomoji",
+    "subcategory": "Faces",
+    "data": "M 50 20 C 72 20 90 35 90 55 C 90 75 72 90 50 90 C 28 90 10 75 10 55 C 10 35 28 20 50 20 Z M 35 48 C 38 45 42 45 45 48 M 55 48 C 58 45 62 45 65 48 M 40 65 Q 50 75 60 65",
+    "width": 100,
+    "height": 100,
+    "fill": "#fde047",
+    "stroke": "#a16207",
+    "strokeWidth": 2
+  },
+  {
+    "id": "sad-cell",
+    "name": "Sad Cell",
+    "category": "Biomoji",
+    "subcategory": "Faces",
+    "data": "M 50 20 C 72 20 90 35 90 55 C 90 75 72 90 50 90 C 28 90 10 75 10 55 C 10 35 28 20 50 20 Z M 35 50 C 38 47 42 47 45 50 M 55 50 C 58 47 62 47 65 50 M 40 72 Q 50 62 60 72",
+    "width": 100,
+    "height": 100,
+    "fill": "#bfdbfe",
+    "stroke": "#2563eb",
+    "strokeWidth": 2
+  }
+]

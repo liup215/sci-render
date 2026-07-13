@@ -449,16 +449,34 @@ input[type='color'] {
 }
 
 .icon-library-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   padding: 10px 12px;
   border-bottom: 1px solid #e5e7eb;
 }
 
 .icon-library-search input {
-  width: 100%;
+  flex: 1;
   padding: 6px 10px;
   border: 1px solid #d1d5db;
   border-radius: 5px;
   font-size: 13px;
+}
+
+.icon-library-import {
+  padding: 6px 10px;
+  border: 1px dashed #3b82f6;
+  border-radius: 5px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.icon-library-import:hover {
+  background: #dbeafe;
 }
 
 .icon-library-breadcrumb {
@@ -625,6 +643,14 @@ input[type='color'] {
   font-size: 13px;
 }
 
+.icon-library-loading {
+  grid-column: 1 / -1;
+  padding: 16px 8px;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 13px;
+}
+
 .icon-library-item {
   display: flex;
   flex-direction: column;
@@ -776,3 +802,187 @@ input[type='color'] {
   border-color: #3b82f6;
 }
 
+/* Icon importer modal */
+.icon-importer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.icon-importer-modal {
+  background: #fff;
+  border-radius: 8px;
+  width: min(900px, calc(100vw - 32px));
+  max-height: calc(100vh - 32px);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.icon-importer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.icon-importer-header h2 {
+  margin: 0;
+  font-size: 16px;
+  color: #111827;
+}
+
+.icon-importer-close {
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  color: #6b7280;
+  cursor: pointer;
+}
+
+.icon-importer-body {
+  padding: 18px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.icon-importer-columns {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 16px;
+}
+
+.icon-importer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.icon-importer-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: #374151;
+}
+
+.icon-importer-label input,
+.icon-importer-label select,
+.icon-importer-textarea {
+  padding: 8px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 5px;
+  font-size: 13px;
+  font-family: inherit;
+}
+
+.icon-importer-label input:focus,
+.icon-importer-label select:focus,
+.icon-importer-textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.icon-importer-textarea {
+  flex: 1;
+  min-height: 180px;
+  resize: vertical;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+}
+
+.icon-importer-hint {
+  font-size: 12px;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.icon-importer-hint code {
+  display: block;
+  margin-top: 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  background: #f3f4f6;
+  padding: 4px 6px;
+  border-radius: 4px;
+  color: #111827;
+}
+
+.icon-importer-preview {
+  width: 100%;
+  height: auto;
+  max-height: 200px;
+  border: 1px dashed #d1d5db;
+  border-radius: 6px;
+  padding: 8px;
+  background: #f9fafb;
+}
+
+.icon-importer-preview-placeholder {
+  flex: 1;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed #d1d5db;
+  border-radius: 6px;
+  color: #9ca3af;
+  font-size: 13px;
+}
+
+.icon-importer-output {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.icon-importer-output-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.icon-importer-copy {
+  padding: 5px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 5px;
+  background: #fff;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.icon-importer-copy:hover:not(:disabled) {
+  background: #f3f4f6;
+}
+
+.icon-importer-copy:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.icon-importer-code {
+  margin: 0;
+  padding: 12px;
+  background: #111827;
+  color: #e5e7eb;
+  border-radius: 6px;
+  font-size: 12px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+  min-height: 100px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .icon-importer-columns {
+    grid-template-columns: 1fr;
+  }
+}

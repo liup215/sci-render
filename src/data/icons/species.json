@@ -1,0 +1,38 @@
+[
+  {
+    "id": "bacterium",
+    "name": "Bacterium",
+    "category": "Species",
+    "subcategory": "Bacteria",
+    "data": "M 20 45 C 25 25 45 20 60 25 C 78 30 88 45 82 62 C 76 78 55 82 38 76 C 22 70 15 58 20 45 Z M 25 35 C 30 30 38 28 45 30 M 70 40 C 75 42 78 48 76 54 M 35 65 C 42 68 52 68 60 64 M 22 48 C 25 48 28 49 30 52",
+    "width": 100,
+    "height": 100,
+    "fill": "#a7f3d0",
+    "stroke": "#059669",
+    "strokeWidth": 2
+  },
+  {
+    "id": "virus",
+    "name": "Virus",
+    "category": "Species",
+    "subcategory": "Viruses",
+    "data": "M 50 35 C 62 35 72 45 72 57 C 72 69 62 79 50 79 C 38 79 28 69 28 57 C 28 45 38 35 50 35 Z M 50 25 L 50 10 M 50 89 L 50 104 M 25 35 L 15 20 M 75 35 L 85 20 M 25 79 L 15 94 M 75 79 L 85 94 M 35 30 L 25 18 M 65 30 L 75 18 M 35 84 L 25 96 M 65 84 L 75 96",
+    "width": 100,
+    "height": 110,
+    "fill": "#fde047",
+    "stroke": "#a16207",
+    "strokeWidth": 2
+  },
+  {
+    "id": "mouse",
+    "name": "Mouse",
+    "category": "Species",
+    "subcategory": "Mammals",
+    "data": "M 25 55 C 25 40 35 30 50 30 C 65 30 75 40 75 55 C 75 70 65 80 50 80 C 35 80 25 70 25 55 Z M 35 35 C 32 25 25 20 20 22 C 16 24 18 32 25 38 M 65 35 C 68 25 75 20 80 22 C 84 24 82 32 75 38 M 40 55 C 40 52 42 50 45 50 C 48 50 50 52 50 55 M 55 55 C 55 58 57 60 60 60 C 63 60 65 58 65 55",
+    "width": 100,
+    "height": 100,
+    "fill": "#e5e7eb",
+    "stroke": "#6b7280",
+    "strokeWidth": 2
+  }
+]

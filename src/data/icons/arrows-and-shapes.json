@@ -1,0 +1,62 @@
+[
+  {
+    "id": "arrow-right",
+    "name": "Right Arrow",
+    "category": "Arrows and Shapes",
+    "subcategory": "Arrows",
+    "data": "M 10 50 L 80 50 M 65 35 L 80 50 L 65 65",
+    "width": 100,
+    "height": 100,
+    "fill": "transparent",
+    "stroke": "#374151",
+    "strokeWidth": 3
+  },
+  {
+    "id": "arrow-bidirectional",
+    "name": "Bidirectional Arrow",
+    "category": "Arrows and Shapes",
+    "subcategory": "Arrows",
+    "data": "M 15 50 L 85 50 M 25 35 L 10 50 L 25 65 M 75 35 L 90 50 L 75 65",
+    "width": 100,
+    "height": 100,
+    "fill": "transparent",
+    "stroke": "#374151",
+    "strokeWidth": 3
+  },
+  {
+    "id": "hexagon-shape",
+    "name": "Hexagon",
+    "category": "Arrows and Shapes",
+    "subcategory": "Basic Shapes",
+    "data": "M 72.50 12.50 L 95.00 50.00 L 72.50 87.50 L 27.50 87.50 L 5.00 50.00 L 27.50 12.50 Z",
+    "width": 100,
+    "height": 100,
+    "fill": "#34d399",
+    "stroke": "#059669",
+    "strokeWidth": 2
+  },
+  {
+    "id": "star-shape",
+    "name": "Star",
+    "category": "Arrows and Shapes",
+    "subcategory": "Basic Shapes",
+    "data": "M 50.00 5.00 L 61.76 38.53 L 97.55 39.27 L 68.45 59.97 L 79.39 94.27 L 50.00 74.00 L 20.61 94.27 L 31.55 59.97 L 2.45 39.27 L 38.24 38.53 Z",
+    "width": 100,
+    "height": 100,
+    "fill": "#fbbf24",
+    "stroke": "#d97706",
+    "strokeWidth": 2
+  },
+  {
+    "id": "triangle-shape",
+    "name": "Triangle",
+    "category": "Arrows and Shapes",
+    "subcategory": "Basic Shapes",
+    "data": "M 50 10 L 90 90 L 10 90 Z",
+    "width": 100,
+    "height": 100,
+    "fill": "#60a5fa",
+    "stroke": "#2563eb",
+    "strokeWidth": 2
+  }
+]

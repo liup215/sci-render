@@ -1,0 +1,50 @@
+[
+  {
+    "id": "nucleus",
+    "name": "Nucleus",
+    "category": "Cell Structures",
+    "subcategory": "Nucleus",
+    "data": "M 50 15 C 72 15 90 32 90 55 C 90 78 72 92 50 90 C 28 88 10 72 10 55 C 10 38 28 15 50 15 Z M 50 35 C 62 35 72 43 72 55 C 72 67 62 75 50 75 C 38 75 28 67 28 55 C 28 43 38 35 50 35 Z M 55 50 C 55 53 53 55 50 55 C 47 55 45 53 45 50 C 45 47 47 45 50 45 C 53 45 55 47 55 50 Z",
+    "width": 100,
+    "height": 100,
+    "fill": "#dbeafe",
+    "stroke": "#2563eb",
+    "strokeWidth": 2
+  },
+  {
+    "id": "mitochondria",
+    "name": "Mitochondria",
+    "category": "Cell Structures",
+    "subcategory": "Mitochondria",
+    "data": "M 25 30 C 40 20 60 22 72 35 C 82 48 78 68 62 76 C 48 84 28 78 22 62 C 16 48 18 36 25 30 Z M 35 35 C 35 45 35 55 38 65 M 48 32 C 48 42 48 52 51 62 M 58 35 C 58 45 58 55 61 65 M 68 42 C 68 50 68 58 70 64",
+    "width": 100,
+    "height": 100,
+    "fill": "#bfdbfe",
+    "stroke": "#1d4ed8",
+    "strokeWidth": 2
+  },
+  {
+    "id": "golgi",
+    "name": "Golgi Apparatus",
+    "category": "Cell Structures",
+    "subcategory": "Golgi",
+    "data": "M 20 25 C 40 20 60 20 80 25 M 18 40 C 40 35 60 35 82 40 M 16 55 C 40 50 60 50 84 55 M 18 70 C 40 65 60 65 82 70 M 20 85 C 40 80 60 80 80 85",
+    "width": 100,
+    "height": 100,
+    "fill": "transparent",
+    "stroke": "#3b82f6",
+    "strokeWidth": 4
+  },
+  {
+    "id": "ribosome",
+    "name": "Ribosome",
+    "category": "Cell Structures",
+    "subcategory": "Ribosomes",
+    "data": "M 30 30 C 38 30 44 36 44 44 C 44 52 38 58 30 58 C 22 58 16 52 16 44 C 16 36 22 30 30 30 Z M 60 50 C 70 50 78 58 78 68 C 78 78 70 86 60 86 C 50 86 42 78 42 68 C 42 58 50 50 60 50 Z M 70 20 C 78 20 84 26 84 34 C 84 42 78 48 70 48 C 62 48 56 42 56 34 C 56 26 62 20 70 20 Z",
+    "width": 100,
+    "height": 100,
+    "fill": "#93c5fd",
+    "stroke": "#1d4ed8",
+    "strokeWidth": 2
+  }
+]

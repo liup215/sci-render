@@ -1,0 +1,26 @@
+[
+  {
+    "id": "simple-epithelium",
+    "name": "Simple Epithelium",
+    "category": "Epithelium",
+    "subcategory": "Simple",
+    "data": "M 10 40 Q 25 25 40 40 T 70 40 T 100 40 L 100 90 Q 85 105 70 90 T 40 90 T 10 90 Z",
+    "width": 110,
+    "height": 100,
+    "fill": "#fed7aa",
+    "stroke": "#ea580c",
+    "strokeWidth": 2
+  },
+  {
+    "id": "stratified-epithelium",
+    "name": "Stratified Epithelium",
+    "category": "Epithelium",
+    "subcategory": "Stratified",
+    "data": "M 10 25 Q 25 15 40 25 T 70 25 T 100 25 L 100 45 Q 85 35 70 45 T 40 45 T 10 45 Z M 10 50 Q 25 40 40 50 T 70 50 T 100 50 L 100 70 Q 85 60 70 70 T 40 70 T 10 70 Z M 10 75 Q 25 65 40 75 T 70 75 T 100 75 L 100 95 Q 85 85 70 95 T 40 95 T 10 95 Z",
+    "width": 110,
+    "height": 100,
+    "fill": "#ffedd5",
+    "stroke": "#c2410c",
+    "strokeWidth": 2
+  }
+]

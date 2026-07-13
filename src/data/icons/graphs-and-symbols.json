@@ -1,0 +1,38 @@
+[
+  {
+    "id": "bar-chart",
+    "name": "Bar Chart",
+    "category": "Graphs and Symbols",
+    "subcategory": "Charts",
+    "data": "M 15 85 L 85 85 M 15 85 L 15 15 M 25 85 L 25 50 L 40 50 L 40 85 M 45 85 L 45 35 L 60 35 L 60 85 M 65 85 L 65 60 L 80 60 L 80 85",
+    "width": 100,
+    "height": 100,
+    "fill": "#93c5fd",
+    "stroke": "#2563eb",
+    "strokeWidth": 2
+  },
+  {
+    "id": "line-chart",
+    "name": "Line Chart",
+    "category": "Graphs and Symbols",
+    "subcategory": "Charts",
+    "data": "M 15 85 L 85 85 M 15 85 L 15 15 M 20 70 L 35 55 L 50 65 L 65 35 L 80 45",
+    "width": 100,
+    "height": 100,
+    "fill": "transparent",
+    "stroke": "#2563eb",
+    "strokeWidth": 2
+  },
+  {
+    "id": "bracket",
+    "name": "Bracket",
+    "category": "Graphs and Symbols",
+    "subcategory": "Brackets",
+    "data": "M 30 10 L 15 10 L 15 90 L 30 90 M 70 10 L 85 10 L 85 90 L 70 90",
+    "width": 100,
+    "height": 100,
+    "fill": "transparent",
+    "stroke": "#4b5563",
+    "strokeWidth": 3
+  }
+]
