@@ -25,21 +25,6 @@ export function IconImporter({ onClose }: IconImporterProps) {
       if (parseError) throw new Error('Invalid SVG markup');
 
       const svgEl = doc.documentElement;
-      const viewBox = svgEl.getAttribute('viewBox');
-      let width = parseFloat(svgEl.getAttribute('width') || '0');
-      let height = parseFloat(svgEl.getAttribute('height') || '0');
-
-      if (viewBox) {
-        const parts = viewBox.split(/\s+/).map(parseFloat);
-        if (parts.length === 4) {
-          width = parts[2];
-          height = parts[3];
-        }
-      }
-
-      if (!width || !height || !Number.isFinite(width) || !Number.isFinite(height)) {
-        throw new Error('Could not determine SVG width/height (need width/height or viewBox)');
-      }
 
       const shapes = Array.from(
         svgEl.querySelectorAll('path, rect, circle, ellipse, line, polyline, polygon')
@@ -48,25 +33,38 @@ export function IconImporter({ onClose }: IconImporterProps) {
         throw new Error('No path or basic shape elements found in SVG');
       }
 
-      const data = shapes
-        .map((el) => convertShapeToPathData(el))
+      const visualData = shapes
+        .map((el) => {
+          const local = convertShapeToPathData(el);
+          if (!local) return null;
+          const { tx, ty } = accumulateGroupTranslate(el);
+          return translatePathData(local, -tx, -ty);
+        })
         .filter((d): d is string => !!d)
         .join(' ');
-      if (!data.trim()) {
+      if (!visualData.trim()) {
         throw new Error('Could not convert SVG elements to path data');
       }
 
+      const visualBBox = getPathBBox(visualData);
+      if (!visualBBox) {
+        throw new Error('Could not determine SVG bounds');
+      }
+
+      const data = translatePathData(visualData, visualBBox.x, visualBBox.y);
       const { fill, stroke, strokeWidth } = resolveShapeStyle(shapes);
 
       return {
         data,
-        width,
-        height,
+        width: visualBBox.width,
+        height: visualBBox.height,
         fill,
         stroke,
         strokeWidth,
       };
-    } catch {
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error('SVG parse error:', e);
       return null;
     }
   }, [svgInput]);
@@ -231,11 +229,22 @@ function toKebabCase(value: string): string {
     .toLowerCase();
 }
 
+function getStyleValue(style: string, prop: string): string | null {
+  const regex = new RegExp(`(?:^|\\s|;\\s*)${prop}\\s*:\\s*([^;]+)`, 'i');
+  const match = style.match(regex);
+  return match ? match[1].trim() : null;
+}
+
 function getEffectiveAttribute(el: Element, attr: string): string | null {
   let node: Element | null = el;
   while (node && node.tagName.toLowerCase() !== 'svg') {
     const value = node.getAttribute(attr);
     if (value !== null) return value;
+    const style = node.getAttribute('style');
+    if (style) {
+      const styleValue = getStyleValue(style, attr);
+      if (styleValue !== null) return styleValue;
+    }
     node = node.parentElement;
   }
   return null;
@@ -265,6 +274,181 @@ function resolveShapeStyle(shapes: Element[]) {
     stroke: rawStroke === 'none' ? 'transparent' : (rawStroke || 'none'),
     strokeWidth,
   };
+}
+
+function parseTranslate(transform: string | null): { tx: number; ty: number } {
+  if (!transform) return { tx: 0, ty: 0 };
+  const match = transform.match(/translate\(\s*([^,\s]+)(?:[\s,]+([^)]+))?\s*\)/);
+  if (!match) return { tx: 0, ty: 0 };
+  return {
+    tx: parseFloat(match[1]) || 0,
+    ty: parseFloat(match[2] || '0') || 0,
+  };
+}
+
+function accumulateGroupTranslate(el: Element): { tx: number; ty: number } {
+  let tx = 0;
+  let ty = 0;
+  let node: Element | null = el.parentElement;
+  while (node && node.tagName.toLowerCase() !== 'svg') {
+    if (node.tagName.toLowerCase() === 'g') {
+      const t = parseTranslate(node.getAttribute('transform'));
+      tx += t.tx;
+      ty += t.ty;
+    }
+    node = node.parentElement;
+  }
+  return { tx, ty };
+}
+
+function getPathBBox(d: string): { x: number; y: number; width: number; height: number } | null {
+  try {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('width', '0');
+    svg.setAttribute('height', '0');
+    svg.style.position = 'absolute';
+    svg.style.visibility = 'hidden';
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', d);
+    svg.appendChild(path);
+    document.body.appendChild(svg);
+    const bbox = path.getBBox();
+    document.body.removeChild(svg);
+    if (!bbox.width || !bbox.height) return null;
+    return { x: bbox.x, y: bbox.y, width: bbox.width, height: bbox.height };
+  } catch {
+    return null;
+  }
+}
+
+function translatePathData(d: string, dx: number, dy: number): string {
+  const tokens = d.match(/[MmLlHhVvCcSsQqTtAaZz]|[-+]?(?:\d*\.\d+|\d+)(?:[eE][-+]?\d+)?/g) ?? [];
+  const out: string[] = [];
+  let i = 0;
+  let cmd = '';
+  let abs = true;
+  let firstMove = true;
+
+  const push = (n: number) => {
+    if (typeof n !== 'number' || Number.isNaN(n)) return;
+    out.push(Number.isInteger(n) ? String(n) : n.toFixed(3).replace(/\.?0+$/, ''));
+  };
+
+  const read = (n: number): number[] => {
+    const res: number[] = [];
+    for (let k = 0; k < n && i < tokens.length; k++) {
+      if (/[MmLlHhVvCcSsQqTtAaZz]/.test(tokens[i])) break;
+      res.push(parseFloat(tokens[i]));
+      i++;
+    }
+    return res;
+  };
+
+  while (i < tokens.length) {
+    const t = tokens[i];
+    if (/[MmLlHhVvCcSsQqTtAaZz]/.test(t)) {
+      cmd = t;
+      abs = t === t.toUpperCase();
+      i++;
+      if ((cmd === 'M' || cmd === 'm') && firstMove) {
+        // First move will be emitted as an absolute M below.
+      } else {
+        out.push(t);
+      }
+      continue;
+    }
+
+    switch (cmd) {
+      case 'M':
+      case 'm': {
+        const [x, y] = read(2);
+        if (firstMove) {
+          // Convert the path's starting move to absolute coordinates in the
+          // translated (visual) coordinate system. This is required for paths
+          // inside translated <g> elements, where a relative "m" starts at the
+          // group's translated origin rather than (0,0).
+          out.push('M');
+          push(x - dx);
+          push(y - dy);
+          firstMove = false;
+        } else {
+          push(abs ? x - dx : x);
+          push(abs ? y - dy : y);
+        }
+        cmd = abs ? 'L' : 'l';
+        while (i < tokens.length && !/[MmLlHhVvCcSsQqTtAaZz]/.test(tokens[i])) {
+          const [x, y] = read(2);
+          push(abs ? x - dx : x);
+          push(abs ? y - dy : y);
+        }
+        break;
+      }
+      case 'L':
+      case 'l':
+      case 'T':
+      case 't': {
+        const [x, y] = read(2);
+        push(abs ? x - dx : x);
+        push(abs ? y - dy : y);
+        break;
+      }
+      case 'H':
+      case 'h': {
+        const [x] = read(1);
+        push(abs ? x - dx : x);
+        break;
+      }
+      case 'V':
+      case 'v': {
+        const [y] = read(1);
+        push(abs ? y - dy : y);
+        break;
+      }
+      case 'C':
+      case 'c': {
+        const [x1, y1, x2, y2, x, y] = read(6);
+        if (abs) {
+          push(x1 - dx); push(y1 - dy);
+          push(x2 - dx); push(y2 - dy);
+          push(x - dx); push(y - dy);
+        } else {
+          push(x1); push(y1);
+          push(x2); push(y2);
+          push(x); push(y);
+        }
+        break;
+      }
+      case 'S':
+      case 's':
+      case 'Q':
+      case 'q': {
+        const [x1, y1, x, y] = read(4);
+        if (abs) {
+          push(x1 - dx); push(y1 - dy);
+          push(x - dx); push(y - dy);
+        } else {
+          push(x1); push(y1);
+          push(x); push(y);
+        }
+        break;
+      }
+      case 'A':
+      case 'a': {
+        const [rx, ry, xRot, largeArc, sweep, x, y] = read(7);
+        push(rx); push(ry); push(xRot); push(largeArc); push(sweep);
+        push(abs ? x - dx : x);
+        push(abs ? y - dy : y);
+        break;
+      }
+      case 'Z':
+      case 'z':
+        break;
+      default:
+        i++;
+    }
+  }
+
+  return out.join(' ');
 }
 
 function convertShapeToPathData(el: Element): string | null {
