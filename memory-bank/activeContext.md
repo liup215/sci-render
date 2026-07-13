@@ -1,14 +1,18 @@
 # Active Context
 
 ## Current Focus
-Fixed excessive dashed alignment guide lines during drag. The snap logic in `src/utils/snap.ts` was generating a guide for every edge/center match within the threshold, so dragging near many objects produced a dense web of dashed lines.
+Restructured icon storage and added a developer tool for importing SVGs into the source icon library.
 
 Key changes:
-- Rewrote `snapDrag` to find only the single closest alignment candidate on the X axis and the single closest candidate on the Y axis.
-- This limits guides to at most one vertical and one horizontal line during any drag, eliminating the "many dashed lines" clutter while preserving snapping behavior.
-- Verified with a production build and a focused `snapDrag` unit test that confirms ≤2 guides are emitted even near multiple objects.
-
-The previous icon-library restructuring (BioRender-style scientific categories with nested navigation) remains in place.
+- Split the monolithic `src/data/iconPresets.ts` into 15 per-category JSON files under `src/data/icons/`.
+- `iconPresets.ts` now only keeps category metadata and exposes `loadIconCategory()` and `loadAllIconPresets()` for dynamic loading.
+- `IconLibraryContent.tsx` lazy-loads category JSON via Vite dynamic imports; search loads all categories in parallel.
+- Added `IconImporter.tsx`, a developer modal reachable from the Library panel's "+ SVG" button.
+  - Pastes an SVG string, parses `<path>` elements, reads viewBox/width/height/fill/stroke.
+  - Lets the user choose category, subcategory, name, and ID.
+  - Previews the icon and generates a JSON snippet ready to paste into the matching `src/data/icons/<category>.json` file.
+- Verified the production build, dynamic chunk loading, category/subcategory navigation, icon insertion, and importer modal UI.
+- Pushed the changes to `main` on GitHub.
 
 ## Decisions Made
 - Tech stack: React + TypeScript + Vite + react-konva + Zustand.
@@ -29,10 +33,11 @@ The previous icon-library restructuring (BioRender-style scientific categories w
 - The `Tool` union is the single source of truth for toolbar/keyboard tools; drawing helpers accept `Exclude<Tool, 'select' | 'text'>` so new drawing tools are caught by TypeScript.
 
 ## Next Steps
-1. Choose the next MVP feature (advanced drawing tools, additional export formats, or UI polish).
-2. Continue incremental implementation with build + browser verification.
-3. Commit and push after each feature slice.
-4. Later: investigate mitigating the Vite dev HMR store-duplication issue (e.g., disable persist in dev or enforce a singleton store reference) to make automated console probes reliable.
+1. Build or source original SVG icon content for the new categories (using the SVG importer or drawing in Inkscape).
+2. Choose the next MVP feature (advanced drawing tools like bezier curves, additional export formats such as PDF/project JSON, or UI polish like color picker popovers).
+3. Continue incremental implementation with build + browser verification.
+4. Commit and push after each feature slice.
+5. Later: investigate mitigating the Vite dev HMR store-duplication issue (e.g., disable persist in dev or enforce a singleton store reference) to make automated console probes reliable.
 
 ## Open Questions
 - Whether to add Tailwind or another UI library after MVP core is stable.
