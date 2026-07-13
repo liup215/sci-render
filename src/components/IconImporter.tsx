@@ -54,6 +54,16 @@ export function IconImporter({ onClose }: IconImporterProps) {
       const data = translatePathData(visualData, visualBBox.x, visualBBox.y);
       const { fill, stroke, strokeWidth } = resolveShapeStyle(shapes);
 
+      // Build a sanitized copy of the original SVG for an accurate preview.
+      // We strip explicit width/height so it scales to the container while
+      // preserving the original viewBox and content.
+      const previewSvg = svgEl.cloneNode(true) as SVGSVGElement;
+      previewSvg.removeAttribute('width');
+      previewSvg.removeAttribute('height');
+      previewSvg.setAttribute('width', '100%');
+      previewSvg.setAttribute('height', '100%');
+      const originalSvg = new XMLSerializer().serializeToString(previewSvg);
+
       return {
         data,
         width: visualBBox.width,
@@ -61,6 +71,7 @@ export function IconImporter({ onClose }: IconImporterProps) {
         fill,
         stroke,
         strokeWidth,
+        originalSvg,
       };
     } catch (e) {
       // eslint-disable-next-line no-console
@@ -189,17 +200,13 @@ export function IconImporter({ onClose }: IconImporterProps) {
             <div className="icon-importer-col">
               <div className="icon-importer-label">3. Preview</div>
               {parsed ? (
-                <svg
-                  viewBox={`0 0 ${parsed.width} ${parsed.height}`}
+                <div
                   className="icon-importer-preview"
-                >
-                  <path
-                    d={parsed.data}
-                    fill={parsed.fill}
-                    stroke={parsed.stroke}
-                    strokeWidth={parsed.strokeWidth}
-                  />
-                </svg>
+                  // Render the original SVG so multi-color icons stay
+                  // recognizable. The container supplies a checkerboard
+                  // background so light/white shapes remain visible.
+                  dangerouslySetInnerHTML={{ __html: parsed.originalSvg }}
+                />
               ) : (
                 <div className="icon-importer-preview-placeholder">Paste a valid SVG</div>
               )}
