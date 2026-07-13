@@ -1,18 +1,14 @@
 # Active Context
 
 ## Current Focus
-The icon library has been restructured around BioRender's scientific category taxonomy and now uses nested navigation: categories → subcategories → icons.
+Fixed excessive dashed alignment guide lines during drag. The snap logic in `src/utils/snap.ts` was generating a guide for every edge/center match within the threshold, so dragging near many objects produced a dense web of dashed lines.
 
 Key changes:
-- `src/data/iconPresets.ts` now defines BioRender-inspired top-level categories (Cell Types, Proteins, Nucleic Acids, Human Anatomy, Lab and Objects, Species, Agriculture, Membranes, Cell Structures, Epithelium, Lipids and Carbs, Chemistry, Graphs and Symbols, Arrows and Shapes, Biomoji), each with subcategories and representative SVG `PathObject` presets.
-- `IconLibraryContent` displays a categories grid first; clicking a category reveals its subcategory list, and clicking a subcategory reveals the icons grid. A Back button returns to the previous level.
-- Search filters across all preset names, categories, and subcategories, overriding the nested view while a query is active.
-- The library is accessed from the left sidebar's Library category, consistent with the existing BioRender-style two-level toolbox.
-- Drawing-tool interaction remains: drawing-tool clicks on existing objects select the top-most object and switch back to select mode.
+- Rewrote `snapDrag` to find only the single closest alignment candidate on the X axis and the single closest candidate on the Y axis.
+- This limits guides to at most one vertical and one horizontal line during any drag, eliminating the "many dashed lines" clutter while preserving snapping behavior.
+- Verified with a production build and a focused `snapDrag` unit test that confirms ≤2 guides are emitted even near multiple objects.
 
-Verification confirmed in a production build (`npm run build && npm run preview`) to avoid the Vite dev HMR store-duplication issue.
-
-Verification confirmed in a production build (`npm run build && npm run preview`) to avoid the Vite dev HMR store-duplication issue.
+The previous icon-library restructuring (BioRender-style scientific categories with nested navigation) remains in place.
 
 ## Decisions Made
 - Tech stack: React + TypeScript + Vite + react-konva + Zustand.

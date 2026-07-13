@@ -69,42 +69,47 @@ export function snapDrag(
     if (Math.abs(gridSnapY) <= threshold) snapDy += gridSnapY;
   }
 
-  // Snap to other objects: edges and centers
-  const movingEdges = {
-    minX: mb.minX + snapDx,
-    maxX: mb.maxX + snapDx,
-    centerX: targetCenter.x,
-    minY: mb.minY + snapDy,
-    maxY: mb.maxY + snapDy,
-    centerY: targetCenter.y,
-  };
+  // Snap to other objects: pick the single closest edge/center alignment per axis
+  const xFeatures = [mb.minX + snapDx, mb.maxX + snapDx, targetCenter.x];
+  const yFeatures = [mb.minY + snapDy, mb.maxY + snapDy, targetCenter.y];
+
+  let bestX: { diff: number; target: number } | null = null;
+  let bestY: { diff: number; target: number } | null = null;
 
   for (const other of others) {
     if (other.id === moving.id) continue;
     const ob = getBounds(other);
     const oc = getCenter(other);
 
-    const candidates = [
-      { axis: 'x' as const, value: movingEdges.minX, target: ob.minX },
-      { axis: 'x' as const, value: movingEdges.maxX, target: ob.maxX },
-      { axis: 'x' as const, value: movingEdges.centerX, target: oc.x },
-      { axis: 'y' as const, value: movingEdges.minY, target: ob.minY },
-      { axis: 'y' as const, value: movingEdges.maxY, target: ob.maxY },
-      { axis: 'y' as const, value: movingEdges.centerY, target: oc.y },
-    ];
+    const xTargets = [ob.minX, ob.maxX, oc.x];
+    const yTargets = [ob.minY, ob.maxY, oc.y];
 
-    for (const c of candidates) {
-      const diff = c.target - c.value;
-      if (Math.abs(diff) <= threshold) {
-        if (c.axis === 'x') {
-          snapDx += diff;
-          guides.push({ orientation: 'vertical', value: c.target });
-        } else {
-          snapDy += diff;
-          guides.push({ orientation: 'horizontal', value: c.target });
+    for (const value of xFeatures) {
+      for (const target of xTargets) {
+        const diff = target - value;
+        if (Math.abs(diff) <= threshold && (!bestX || Math.abs(diff) < Math.abs(bestX.diff))) {
+          bestX = { diff, target };
         }
       }
     }
+
+    for (const value of yFeatures) {
+      for (const target of yTargets) {
+        const diff = target - value;
+        if (Math.abs(diff) <= threshold && (!bestY || Math.abs(diff) < Math.abs(bestY.diff))) {
+          bestY = { diff, target };
+        }
+      }
+    }
+  }
+
+  if (bestX) {
+    snapDx += bestX.diff;
+    guides.push({ orientation: 'vertical', value: bestX.target });
+  }
+  if (bestY) {
+    snapDy += bestY.diff;
+    guides.push({ orientation: 'horizontal', value: bestY.target });
   }
 
   return { x: snapDx, y: snapDy, guides };
