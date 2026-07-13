@@ -29,6 +29,7 @@
 - BioRender-style scientific icon library: categories grid with 15 top-level scientific categories (Cell Types, Proteins, Nucleic Acids, Human Anatomy, Lab and Objects, Species, Agriculture, Membranes, Cell Structures, Epithelium, Lipids and Carbs, Chemistry, Graphs and Symbols, Arrows and Shapes, Biomoji), nested subcategories, searchable preset icons rendered as `Konva.Path`, and Back navigation.
 - Dynamic icon loading: icon presets moved from a single TypeScript array into per-category JSON files under `src/data/icons/`; categories are lazy-loaded via Vite dynamic imports to keep the main bundle smaller as the library grows.
 - SVG importer developer tool: a modal in the Library panel parses pasted SVG markup, extracts path data and viewBox dimensions, lets the user assign category/subcategory/name/id, previews the icon, and emits a JSON snippet ready to paste into the appropriate `src/data/icons/<category>.json` source file.
+- SVG importer handles Inkscape exports: parses inline `style="fill:..."` / `stroke:...` / `stroke-width:...`, accumulates ancestor `<g transform="translate(...)">` offsets, normalizes translated paths to the origin, and fixes bbox inflation from relative initial moves.
 - Drag alignment guide cleanup: `snapDrag` now emits at most one vertical and one horizontal guide (the closest match on each axis), preventing a dense web of dashed lines when dragging near many objects.
 
 ## In Progress
@@ -43,5 +44,6 @@
 - Vite dev HMR can leave multiple Zustand store instances in memory, so automated console probes or dynamic imports of the store module may see stale/empty state even though the React UI uses the authoritative store instance. Use a production build/preview for reliable automated verification of store-dependent features.
 
 ## Recent Fixes
+- SVG importer Inkscape compatibility: previous parser only read direct XML attributes, missed colors in inline `style`, and ignored `<g transform="translate(...)">` offsets. Now parses style attributes, accumulates group translate offsets, and normalizes path data to the visual origin. Fixed inflated bbox caused by relative initial moves staying at local (0,0).
 - Grid rendering: previous single Konva `Line` with concatenated points produced diagonal connecting lines; now renders separate vertical and horizontal `Line` nodes for a regular grid.
 - Text creation/edit flow: text tool now creates a text object on mouseup (instead of mousedown) and immediately enters inline editing; select tool double-click on a text object enters inline editing via both Konva `onDblClick` and a custom 300ms double-click detector.

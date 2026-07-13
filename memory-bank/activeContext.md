@@ -1,18 +1,16 @@
 # Active Context
 
 ## Current Focus
-Restructured icon storage and added a developer tool for importing SVGs into the source icon library.
+Fixed the SVG importer so it correctly handles Inkscape-exported SVGs with inline `style` attributes and nested `<g transform="translate(...)">` groups.
 
 Key changes:
-- Split the monolithic `src/data/iconPresets.ts` into 15 per-category JSON files under `src/data/icons/`.
-- `iconPresets.ts` now only keeps category metadata and exposes `loadIconCategory()` and `loadAllIconPresets()` for dynamic loading.
-- `IconLibraryContent.tsx` lazy-loads category JSON via Vite dynamic imports; search loads all categories in parallel.
-- Added `IconImporter.tsx`, a developer modal reachable from the Library panel's "+ SVG" button.
-  - Pastes an SVG string, parses `<path>` elements, reads viewBox/width/height/fill/stroke.
-  - Lets the user choose category, subcategory, name, and ID.
-  - Previews the icon and generates a JSON snippet ready to paste into the matching `src/data/icons/<category>.json` file.
-- Verified the production build, dynamic chunk loading, category/subcategory navigation, icon insertion, and importer modal UI.
-- Pushed the changes to `main` on GitHub.
+- Extended `IconImporter.tsx` to parse `fill`/`stroke`/`stroke-width` from inline `style="..."` attributes, not just XML attributes.
+- Added group-transform accumulation (`parseTranslate`, `accumulateGroupTranslate`) so ancestor `<g transform="translate(...)">` offsets are applied to path coordinates.
+- Added `getPathBBox()` using the browser SVG `getBBox()` API to compute the true visual bounds of translated paths.
+- Rewrote `translatePathData()` to shift absolute command coordinates by group offsets and to convert the initial relative `m` into an absolute `M` at the translated origin, fixing a bounding-box inflation bug.
+- Width/height are now derived from the computed visual bbox, making generated JSON dimensions match the actual icon size.
+- Verified by importing the user's pasted Inkscape SVG: preview viewBox is `0 0 43.102 91.083` (matching expectations), and the icon inserts correctly into the canvas via the library.
+- Production build passes; changes pushed to `main` on GitHub.
 
 ## Decisions Made
 - Tech stack: React + TypeScript + Vite + react-konva + Zustand.
