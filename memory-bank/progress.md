@@ -30,6 +30,7 @@
 - Dynamic icon loading: icon presets moved from a single TypeScript array into per-category JSON files under `src/data/icons/`; categories are lazy-loaded via Vite dynamic imports to keep the main bundle smaller as the library grows.
 - SVG importer developer tool: a modal in the Library panel parses pasted SVG markup, extracts path data and viewBox dimensions, lets the user assign category/subcategory/name/id, previews the icon, and emits a JSON snippet ready to paste into the appropriate `src/data/icons/<category>.json` source file.
 - SVG importer handles Inkscape exports: parses inline `style="fill:..."` / `stroke:...` / `stroke-width:...`, accumulates ancestor `<g transform="translate(...)">` offsets, normalizes translated paths to the origin, and fixes bbox inflation from relative initial moves.
+- SVG importer preview now shows the original multi-color SVG on a checkerboard background, preventing light/white icons from appearing blank.
 - Drag alignment guide cleanup: `snapDrag` now emits at most one vertical and one horizontal guide (the closest match on each axis), preventing a dense web of dashed lines when dragging near many objects.
 
 ## In Progress

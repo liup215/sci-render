@@ -1,15 +1,12 @@
 # Active Context
 
 ## Current Focus
-Fixed the SVG importer so it correctly handles Inkscape-exported SVGs with inline `style` attributes and nested `<g transform="translate(...)">` groups.
+Fixed the SVG importer preview so it no longer appears blank for multi-color or near-white Inkscape-exported SVGs.
 
 Key changes:
-- Extended `IconImporter.tsx` to parse `fill`/`stroke`/`stroke-width` from inline `style="..."` attributes, not just XML attributes.
-- Added group-transform accumulation (`parseTranslate`, `accumulateGroupTranslate`) so ancestor `<g transform="translate(...)">` offsets are applied to path coordinates.
-- Added `getPathBBox()` using the browser SVG `getBBox()` API to compute the true visual bounds of translated paths.
-- Rewrote `translatePathData()` to shift absolute command coordinates by group offsets and to convert the initial relative `m` into an absolute `M` at the translated origin, fixing a bounding-box inflation bug.
-- Width/height are now derived from the computed visual bbox, making generated JSON dimensions match the actual icon size.
-- Verified by importing the user's pasted Inkscape SVG: preview viewBox is `0 0 43.102 91.083` (matching expectations), and the icon inserts correctly into the canvas via the library.
+- The importer preview now renders the original pasted SVG markup instead of a flattened single-path approximation.
+- Added a checkerboard background to `.icon-importer-preview` so white and very light fills remain visible.
+- Preserved all existing parsing/flattening logic (style attributes, group transforms, bbox normalization) so the generated JSON output is unchanged.
 - Production build passes; changes pushed to `main` on GitHub.
 
 ## Decisions Made
