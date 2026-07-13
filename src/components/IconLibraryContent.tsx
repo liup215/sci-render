@@ -1,11 +1,16 @@
 import { useMemo, useState } from 'react';
-import { iconPresets, ICON_CATEGORIES } from '../data/iconPresets';
+import { iconPresets, ICON_CATEGORIES, getCategoryByName } from '../data/iconPresets';
 import { v4 as uuidv4 } from 'uuid';
 import type { PathObject } from '../types';
 import { useEditorStore } from '../store/useEditorStore';
 
+type ViewState =
+  | { mode: 'categories' }
+  | { mode: 'subcategories'; category: string }
+  | { mode: 'icons'; category: string; subcategory: string };
+
 export function IconLibraryContent() {
-  const [activeCategory, setActiveCategory] = useState<string>(ICON_CATEGORIES[0]);
+  const [view, setView] = useState<ViewState>({ mode: 'categories' });
   const [query, setQuery] = useState('');
   const addObject = useEditorStore((s) => s.addObject);
   const canvasSize = useEditorStore((s) => s.canvasSize);
@@ -28,14 +33,50 @@ export function IconLibraryContent() {
     addObject(obj);
   };
 
-  const filtered = useMemo(() => {
+  const searchResults = useMemo(() => {
     const term = query.trim().toLowerCase();
-    return iconPresets.filter((p) => {
-      const matchesCategory = p.category === activeCategory;
-      const matchesQuery = term === '' || p.name.toLowerCase().includes(term);
-      return matchesCategory && matchesQuery;
-    });
-  }, [activeCategory, query]);
+    if (term === '') return null;
+    return iconPresets.filter(
+      (p) =>
+        p.name.toLowerCase().includes(term) ||
+        p.category.toLowerCase().includes(term) ||
+        p.subcategory.toLowerCase().includes(term)
+    );
+  }, [query]);
+
+  const subcategories = useMemo(() => {
+    if (view.mode !== 'subcategories' && view.mode !== 'icons') return [];
+    return getCategoryByName(view.category)?.subcategories ?? [];
+  }, [view]);
+
+  const currentIcons = useMemo(() => {
+    if (searchResults) return searchResults;
+    if (view.mode === 'icons') {
+      return iconPresets.filter(
+        (p) => p.category === view.category && p.subcategory === view.subcategory
+      );
+    }
+    return [];
+  }, [searchResults, view]);
+
+  const handleCategoryClick = (category: string) => {
+    setQuery('');
+    setView({ mode: 'subcategories', category });
+  };
+
+  const handleSubcategoryClick = (subcategory: string) => {
+    setView({ mode: 'icons', category: (view as { category: string }).category, subcategory });
+  };
+
+  const goBack = () => {
+    if (view.mode === 'icons') {
+      setView({ mode: 'subcategories', category: view.category });
+    } else if (view.mode === 'subcategories') {
+      setView({ mode: 'categories' });
+    }
+  };
+
+  const categoryColor = (name: string) => getCategoryByName(name)?.color ?? '#3b82f6';
 
   return (
     <div className="icon-library-content">
@@ -44,46 +85,121 @@ export function IconLibraryContent() {
           type="text"
           placeholder="Search icons..."
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            if (e.target.value.trim()) {
+              setView({ mode: 'categories' });
+            }
+          }}
         />
       </div>
-      <div className="icon-library-categories">
-        {ICON_CATEGORIES.map((cat) => (
-          <button
-            key={cat}
-            className={`icon-library-category ${cat === activeCategory ? 'active' : ''}`}
-            onClick={() => setActiveCategory(cat)}
-          >
-            {cat}
+
+      {view.mode !== 'categories' && !searchResults && (
+        <div className="icon-library-breadcrumb">
+          <button className="icon-library-back" onClick={goBack}>
+            ← Back
           </button>
-        ))}
-      </div>
-      <div className="icon-library-grid">
-        {filtered.map((preset) => (
-          <button
-            key={preset.id}
-            className="icon-library-item"
-            onClick={() => handleInsert(preset)}
-            title={preset.name}
-          >
-            <svg
-              viewBox={`0 0 ${preset.width} ${preset.height}`}
-              className="icon-library-preview"
-            >
-              <path
-                d={preset.data}
-                fill={preset.fill}
-                stroke={preset.stroke}
-                strokeWidth={preset.strokeWidth}
-              />
-            </svg>
-            <span className="icon-library-name">{preset.name}</span>
-          </button>
-        ))}
-        {filtered.length === 0 && (
-          <div className="icon-library-empty">No icons found</div>
+          <span className="icon-library-current">
+            {view.mode === 'subcategories' ? view.category : view.subcategory}
+          </span>
+        </div>
+      )}
+
+      <div className="icon-library-scroll">
+        {searchResults && (
+          <div className="icon-library-grid">
+            {searchResults.map((preset) => (
+              <IconItem key={preset.id} preset={preset} onInsert={handleInsert} />
+            ))}
+            {searchResults.length === 0 && (
+              <div className="icon-library-empty">No icons found</div>
+            )}
+          </div>
+        )}
+
+        {!searchResults && view.mode === 'categories' && (
+          <div className="icon-library-categories-grid">
+            {ICON_CATEGORIES.map((cat) => (
+              <button
+                key={cat.name}
+                className="icon-library-category-card"
+                onClick={() => handleCategoryClick(cat.name)}
+                title={cat.name}
+              >
+                <span
+                  className="icon-library-category-icon"
+                  style={{ background: cat.color }}
+                >
+                  {cat.name.charAt(0)}
+                </span>
+                <span className="icon-library-category-name">{cat.name}</span>
+                <span className="icon-library-category-count">
+                  {iconPresets.filter((p) => p.category === cat.name).length}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {!searchResults && view.mode === 'subcategories' && (
+          <div className="icon-library-subcategories">
+            {subcategories.map((sub) => (
+              <button
+                key={sub}
+                className="icon-library-subcategory"
+                onClick={() => handleSubcategoryClick(sub)}
+              >
+                <span
+                  className="icon-library-subcategory-dot"
+                  style={{ background: categoryColor(view.category) }}
+                />
+                <span className="icon-library-subcategory-name">{sub}</span>
+                <span className="icon-library-subcategory-arrow">›</span>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {!searchResults && view.mode === 'icons' && (
+          <div className="icon-library-grid">
+            {currentIcons.map((preset) => (
+              <IconItem key={preset.id} preset={preset} onInsert={handleInsert} />
+            ))}
+            {currentIcons.length === 0 && (
+              <div className="icon-library-empty">No icons in this subcategory</div>
+            )}
+          </div>
         )}
       </div>
     </div>
+  );
+}
+
+function IconItem({
+  preset,
+  onInsert,
+}: {
+  preset: (typeof iconPresets)[number];
+  onInsert: (preset: (typeof iconPresets)[number]) => void;
+}) {
+  return (
+    <button
+      className="icon-library-item"
+      onClick={() => onInsert(preset)}
+      title={preset.name}
+    >
+      <svg
+        viewBox={`0 0 ${preset.width} ${preset.height}`}
+        className="icon-library-preview"
+      >
+        <path
+          d={preset.data}
+          fill={preset.fill}
+          stroke={preset.stroke}
+          strokeWidth={preset.strokeWidth}
+        />
+      </svg>
+      <span className="icon-library-name">{preset.name}</span>
+    </button>
   );
 }

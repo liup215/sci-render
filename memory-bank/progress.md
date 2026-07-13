@@ -26,9 +26,10 @@
 - SVG vector export: toolbar "Export SVG" button generates true SVG from active slide objects (rect, circle, text, line, arrow, image, path, group) with proper transforms, markers, and multi-line text; downloads as `<slide-name>.svg`.
 - Freehand pen tool: toolbar "Pen (P)" button and `P` shortcut; mouse drag creates a `PathObject` with normalized SVG path data; supports selection, transform, layers, grouping, undo/redo, persistence, and SVG export.
 - BioRender-style UI reorganization v3: minimal dark top header with brand + global actions; left sidebar uses a two-level navigation where a narrow vertical category list (Select / Shapes / Lines / Text / Draw / Library) reveals tools or the icon library in the wider right-hand panel; right-side Properties / Layers / Slides tabs; central canvas. Drawing-tool clicks on existing objects now select the object instead of drawing on top.
+- BioRender-style scientific icon library: categories grid with 15 top-level scientific categories (Cell Types, Proteins, Nucleic Acids, Human Anatomy, Lab and Objects, Species, Agriculture, Membranes, Cell Structures, Epithelium, Lipids and Carbs, Chemistry, Graphs and Symbols, Arrows and Shapes, Biomoji), nested subcategories, searchable preset icons rendered as `Konva.Path`, and Back navigation.
 
 ## In Progress
-- Deciding the next MVP feature after the UI pass (e.g., bezier curves / custom shapes, PDF export, color picker popover, or project JSON import/export).
+- Deciding the next MVP feature after the icon library pass (e.g., more detailed scientific icons, bezier curves / custom shapes, PDF export, color picker popover, or project JSON import/export).
 
 ## What's Left
 - User gallery/auth (post-MVP).

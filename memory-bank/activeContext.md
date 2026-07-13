@@ -1,18 +1,16 @@
 # Active Context
 
 ## Current Focus
-The left toolbox has been redesigned to match BioRender's category-driven navigation. Instead of listing every drawing tool directly, the left sidebar now shows a narrow vertical list of high-level categories; selecting a category reveals its tools or the icon library in the wider panel to the right.
+The icon library has been restructured around BioRender's scientific category taxonomy and now uses nested navigation: categories → subcategories → icons.
 
-Key layout changes (BioRender-style v3):
-- `App.tsx` still renders a minimal `<Toolbar />` in the header and `<LeftPanel />` in the body.
-- Top header holds global actions only: brand, undo/redo/delete, view toggles (grid/rulers/snap), insert/export (image/PNG/SVG), and zoom.
-- `LeftPanel` remains a two-column sidebar, but the narrow left column is now a category selector rather than a flat tool list.
-- `<Toolbox />` now renders top-level categories: Select, Shapes, Lines, Text, Draw, Library. Clicking a category highlights it and passes the selection upward.
-- New `<ToolPalette />` renders the sub-tools for the active category (e.g., Shapes → Rectangle / Circle; Lines → Line / Arrow) and swaps in `<IconLibraryContent />` for the Library category.
-- `IconLibraryContent` still provides search and categorized preset icons, now accessed through the Library category.
-- Drawing-tool interaction: when a drawing tool (rectangle, circle, line, arrow, text, pen) is active and the user clicks on an existing object, the click selects the top-most object and switches back to the select tool instead of creating a new shape. The left-panel category highlights also sync to the current tool so the UI stays consistent.
-- Slides remain in a "Slides" tab inside the right-side `PropertiesPanel`.
-- Align and ordering buttons are still removed from the top header; ordering lives in the Layers tab.
+Key changes:
+- `src/data/iconPresets.ts` now defines BioRender-inspired top-level categories (Cell Types, Proteins, Nucleic Acids, Human Anatomy, Lab and Objects, Species, Agriculture, Membranes, Cell Structures, Epithelium, Lipids and Carbs, Chemistry, Graphs and Symbols, Arrows and Shapes, Biomoji), each with subcategories and representative SVG `PathObject` presets.
+- `IconLibraryContent` displays a categories grid first; clicking a category reveals its subcategory list, and clicking a subcategory reveals the icons grid. A Back button returns to the previous level.
+- Search filters across all preset names, categories, and subcategories, overriding the nested view while a query is active.
+- The library is accessed from the left sidebar's Library category, consistent with the existing BioRender-style two-level toolbox.
+- Drawing-tool interaction remains: drawing-tool clicks on existing objects select the top-most object and switch back to select mode.
+
+Verification confirmed in a production build (`npm run build && npm run preview`) to avoid the Vite dev HMR store-duplication issue.
 
 Verification confirmed in a production build (`npm run build && npm run preview`) to avoid the Vite dev HMR store-duplication issue.
 
