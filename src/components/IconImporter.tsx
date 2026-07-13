@@ -41,24 +41,29 @@ export function IconImporter({ onClose }: IconImporterProps) {
         throw new Error('Could not determine SVG width/height (need width/height or viewBox)');
       }
 
-      const paths = Array.from(svgEl.querySelectorAll('path'));
-      if (paths.length === 0) {
-        throw new Error('No <path> elements found in SVG');
+      const shapes = Array.from(
+        svgEl.querySelectorAll('path, rect, circle, ellipse, line, polyline, polygon')
+      );
+      if (shapes.length === 0) {
+        throw new Error('No path or basic shape elements found in SVG');
       }
 
-      const data = paths.map((p) => p.getAttribute('d') || '').join(' ');
-      const first = paths[0];
-      const rawFill = first.getAttribute('fill') || '#94a3b8';
-      const rawStroke = first.getAttribute('stroke') || 'none';
-      const strokeWidthAttr = first.getAttribute('stroke-width');
-      const strokeWidth = strokeWidthAttr ? parseFloat(strokeWidthAttr) : 0;
+      const data = shapes
+        .map((el) => convertShapeToPathData(el))
+        .filter((d): d is string => !!d)
+        .join(' ');
+      if (!data.trim()) {
+        throw new Error('Could not convert SVG elements to path data');
+      }
+
+      const { fill, stroke, strokeWidth } = resolveShapeStyle(shapes);
 
       return {
         data,
         width,
         height,
-        fill: rawFill === 'none' ? 'transparent' : rawFill,
-        stroke: rawStroke === 'none' ? 'transparent' : rawStroke,
+        fill,
+        stroke,
         strokeWidth,
       };
     } catch {
@@ -224,4 +229,111 @@ function toKebabCase(value: string): string {
     .replace(/[^a-zA-Z0-9\s-]/g, '')
     .replace(/\s+/g, '-')
     .toLowerCase();
+}
+
+function getEffectiveAttribute(el: Element, attr: string): string | null {
+  let node: Element | null = el;
+  while (node && node.tagName.toLowerCase() !== 'svg') {
+    const value = node.getAttribute(attr);
+    if (value !== null) return value;
+    node = node.parentElement;
+  }
+  return null;
+}
+
+function resolveShapeStyle(shapes: Element[]) {
+  let rawFill: string | null = null;
+  let rawStroke: string | null = null;
+  let strokeWidth = 0;
+
+  for (const el of shapes) {
+    if (rawFill === null) {
+      rawFill = getEffectiveAttribute(el, 'fill');
+    }
+    if (rawStroke === null) {
+      rawStroke = getEffectiveAttribute(el, 'stroke');
+    }
+    if (strokeWidth === 0) {
+      const sw = getEffectiveAttribute(el, 'stroke-width');
+      if (sw) strokeWidth = parseFloat(sw);
+    }
+    if (rawFill && rawStroke && strokeWidth > 0) break;
+  }
+
+  return {
+    fill: rawFill === 'none' ? 'transparent' : (rawFill || '#94a3b8'),
+    stroke: rawStroke === 'none' ? 'transparent' : (rawStroke || 'none'),
+    strokeWidth,
+  };
+}
+
+function convertShapeToPathData(el: Element): string | null {
+  const tag = el.tagName.toLowerCase();
+
+  switch (tag) {
+    case 'path': {
+      return el.getAttribute('d') || null;
+    }
+
+    case 'rect': {
+      const x = parseFloat(el.getAttribute('x') || '0');
+      const y = parseFloat(el.getAttribute('y') || '0');
+      const w = parseFloat(el.getAttribute('width') || '0');
+      const h = parseFloat(el.getAttribute('height') || '0');
+      const rx = parseFloat(el.getAttribute('rx') || '0');
+      const ry = parseFloat(el.getAttribute('ry') || rx.toString());
+      if (!w || !h || !Number.isFinite(w) || !Number.isFinite(h)) return null;
+      if (rx <= 0 || ry <= 0) {
+        return `M${x},${y} h${w} v${h} h-${w} Z`;
+      }
+      return (
+        `M${x + rx},${y} h${w - 2 * rx} ` +
+        `a${rx},${ry} 0 0 1 ${rx},${ry} v${h - 2 * ry} ` +
+        `a${rx},${ry} 0 0 1 -${rx},${ry} h-${w - 2 * rx} ` +
+        `a${rx},${ry} 0 0 1 -${rx},-${ry} v-${h - 2 * ry} ` +
+        `a${rx},${ry} 0 0 1 ${rx},-${ry} Z`
+      );
+    }
+
+    case 'circle': {
+      const cx = parseFloat(el.getAttribute('cx') || '0');
+      const cy = parseFloat(el.getAttribute('cy') || '0');
+      const r = parseFloat(el.getAttribute('r') || '0');
+      if (!r || !Number.isFinite(r)) return null;
+      return `M${cx - r},${cy} a${r},${r} 0 1 0 ${2 * r},0 a${r},${r} 0 1 0 -${2 * r},0`;
+    }
+
+    case 'ellipse': {
+      const cx = parseFloat(el.getAttribute('cx') || '0');
+      const cy = parseFloat(el.getAttribute('cy') || '0');
+      const rx = parseFloat(el.getAttribute('rx') || '0');
+      const ry = parseFloat(el.getAttribute('ry') || '0');
+      if (!rx || !ry || !Number.isFinite(rx) || !Number.isFinite(ry)) return null;
+      return `M${cx - rx},${cy} a${rx},${ry} 0 1 0 ${2 * rx},0 a${rx},${ry} 0 1 0 -${2 * rx},0`;
+    }
+
+    case 'line': {
+      const x1 = parseFloat(el.getAttribute('x1') || '0');
+      const y1 = parseFloat(el.getAttribute('y1') || '0');
+      const x2 = parseFloat(el.getAttribute('x2') || '0');
+      const y2 = parseFloat(el.getAttribute('y2') || '0');
+      return `M${x1},${y1} L${x2},${y2}`;
+    }
+
+    case 'polyline':
+    case 'polygon': {
+      const points = el.getAttribute('points');
+      if (!points) return null;
+      const nums = points.trim().split(/[\s,]+/).map(parseFloat);
+      if (nums.length < 4 || nums.some(Number.isNaN)) return null;
+      const pairs: string[] = [];
+      for (let i = 0; i < nums.length; i += 2) {
+        pairs.push(`${nums[i]},${nums[i + 1]}`);
+      }
+      return `M${pairs.join(' L')}${tag === 'polygon' ? ' Z' : ''}`;
+    }
+
+    default:
+      return null;
+  }
 }
